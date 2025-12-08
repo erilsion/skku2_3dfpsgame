@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]  // 이 컴포넌트를 무조건 달게 해주는 어트리뷰트
-public class ErrorTest : MonoBehaviour
+public class ErrorTest1 : MonoBehaviour
 {
     // 오류: 프로그램이 비정상적으로 동작하게 하는 문제
     // 예외: 프로그램이 실행 중 발생하고, 개발자가 예상하고 처리할 수 있는 문제
