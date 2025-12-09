@@ -1,38 +1,34 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using Vitals;
 
+// 플레이어의 '스탯'을 관리하는 컴포넌트
 public class PlayerStats : MonoBehaviour
 {
-    private Health _health;
-    private Stamina _stamina;
-    [SerializeField] private Slider _healthSlider;
+    // 도메인: 특정 분야의 지식
+
+    [Header("스태미나")]  // 소모 가능한 스탯
+    public ConsumableStat Stamina;
     [SerializeField] private Slider _staminaSlider;
     private float _staminaDecreasePerSecond = 20f;
     private float _staminaRecoverPerSecond = 10f;
 
-    private PlayerMove _playerMove;
+    [Header("체력")]  // 소모 가능한 스탯
+    public ConsumableStat Health;
+    [SerializeField] private Slider _healthSlider;
 
-    private void Awake()
-    {
-        _health = GetComponent<Health>();
-        _stamina = GetComponent<Stamina>();
-        _playerMove = GetComponent<PlayerMove>();
-    }
+    [Header("스탯")]
+    public ValueStat Damage;
+    public ValueStat MoveSpeed;
+    public ValueStat RunSpeed;
+    public ValueStat JumpPower;
+
+
+    // 스태미나, 체력 스탯 관련 코드 (회복, 소모, 업그레이드...)
 
     private void Start()
     {
-        if (_healthSlider != null)
-        {
-            _healthSlider.maxValue = _health.MaxValue;
-            _healthSlider.value = _health.Value;
-        }
-
-        if (_staminaSlider != null)
-        {
-            _staminaSlider.maxValue = _stamina.MaxValue;
-            _staminaSlider.value = _stamina.Value;
-        }
+        Health.Initialize();
+        Stamina.Initialize();
     }
 
     private void Update()
@@ -43,7 +39,7 @@ public class PlayerStats : MonoBehaviour
     void SprintMovement()
     {
         bool canSprint = _stamina.Value > 0f;
-        bool isSprintKeyPressed = UnityEngine.Input.GetKey(KeyCode.LeftShift);
+        bool isSprintKeyPressed = Input.GetKey(KeyCode.LeftShift);
 
         bool isSprinting = isSprintKeyPressed && canSprint;
 
@@ -63,22 +59,12 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
-    void UpdateUI()
-    {
-
-        if (_healthSlider != null)
-            _healthSlider.value = _health.Value;
-
-        if (_staminaSlider != null)
-            _staminaSlider.value = _stamina.Value;
-    }
-
     public bool TryUseStamina(float amount)
     {
-        if (_stamina.Value < amount)
+        if (Stamina.Value < amount)
             return false;
 
-        _stamina.Decrease(amount);
+        Stamina.Decrease(amount);
         return true;
     }
 }

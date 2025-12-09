@@ -1,13 +1,24 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 // 키보드를 누르면 캐릭터를 그 방향으로 이동 시키고 싶다.
 [RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(PlayerStats))]
 public class PlayerMove : MonoBehaviour
 {
+    [Serializable]
+    public class MoveConfig
+    {
+        public float Gravity;
+        public float RunStamina;
+        public float JumpStamina;
+    }
+
+    public MoveConfig Config;
+
     [Header("이동 속도")]
     private float _playerSpeed = 7f;
-    public float MoveSpeed = 7f;
-    public float RunSpeed = 20f;
+    public float RunStamina = 3f;
 
     [Header("점프력")]
     public float JumpPower = 5f;
@@ -17,18 +28,16 @@ public class PlayerMove : MonoBehaviour
     private bool _hasDoubleJumped = false;
 
     [Header("중력")]
-    public float Gravity = -9.81f;
     private float _yVelocity = 0f;  // 중력에 의해 누적될 y값 변수
 
     [Header("컨트롤러")]
     private CharacterController _controller;
-    private PlayerStats _playerStats;
+    private PlayerStats _stats;
 
     private void Awake()
     {
         _controller = GetComponent<CharacterController>();
-        _playerStats = GetComponent<PlayerStats>();
-        _playerSpeed = MoveSpeed;
+        _stats = GetComponent<PlayerStats>();
     }
 
     private void Update()
@@ -49,9 +58,27 @@ public class PlayerMove : MonoBehaviour
         direction.Normalize();
 
         // 점프
-        if (Input.GetButtonDown("Jump") && _controller.isGrounded)
+        if (_yVelocity < 0f && _controller.isGrounded)
         {
-            _yVelocity = JumpPower;
+            _hasDoubleJumped = false;
+        }
+
+        if (Input.GetButtonDown("Jump"))
+        {
+            if (_controller.isGrounded)
+            {
+                _yVelocity = JumpPower;
+            }
+            else
+            {
+                TryDoubleJump();
+            }
+        }
+
+        float moveSpeed = _stats.MoveSpeed.Value;
+        if (Input.GetKey(KeyCode.LeftShift) && _stats.Stamina.TryConsume(RunStamina * Time.deltaTime))
+        {
+            moveSpeed = _stats.RunSpeed.Value;
         }
 
         // 2_2. 캐릭터(카메라)가 쳐다보는 방향으로 변환한다. (월드 -> 로컬)
@@ -61,12 +88,11 @@ public class PlayerMove : MonoBehaviour
         // 3. 방향으로 이동시키기
         _controller.Move(direction * _playerSpeed * Time.deltaTime);
     }
-    public void SetRunMode()
+
+    private void TryDoubleJump()
     {
-        _playerSpeed = RunSpeed;
-    }
-    public void SetWalkMode()
-    {
-        _playerSpeed = MoveSpeed;
+        if (_hasDoubleJumped) return;
+        _yVelocity = JumpPower;
+        _hasDoubleJumped = true;
     }
 }
