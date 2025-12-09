@@ -130,7 +130,6 @@ GameObject:
   - component: {fileID: 6538316}
   - component: {fileID: 6538317}
   - component: {fileID: 6538319}
-  - component: {fileID: 6538318}
   m_Layer: 5
   m_Name: HealthSlider
   m_TagString: Untagged
@@ -211,33 +210,6 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
---- !u!234 &6538318
-SliderJoint2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6538315}
-  m_Enabled: 1
-  serializedVersion: 4
-  m_EnableCollision: 0
-  m_ConnectedRigidBody: {fileID: 6538319}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_BreakAction: 3
-  m_AutoConfigureConnectedAnchor: 0
-  m_Anchor: {x: 0, y: 0}
-  m_ConnectedAnchor: {x: 0, y: 0}
-  m_AutoConfigureAngle: 1
-  m_Angle: 0
-  m_UseMotor: 0
-  m_Motor:
-    m_MotorSpeed: 0
-    m_MaximumMotorForce: 10000
-  m_UseLimits: 0
-  m_TranslationLimits:
-    m_LowerTranslation: 0
-    m_UpperTranslation: 0
 --- !u!50 &6538319
 Rigidbody2D:
   serializedVersion: 5
@@ -851,7 +823,7 @@ MonoBehaviour:
     _value: 100
     _regenValue: 10
   Damage:
-    _value: 0
+    _value: 10
   MoveSpeed:
     _value: 7
   RunSpeed:
@@ -886,8 +858,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _stats: {fileID: 397518664}
-  _healthSlider: {fileID: 6538318}
-  _staminaSlider: {fileID: 976271022}
+  _healthSlider: {fileID: 6538317}
+  _staminaSlider: {fileID: 976271021}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -1286,7 +1258,6 @@ GameObject:
   - component: {fileID: 976271020}
   - component: {fileID: 976271021}
   - component: {fileID: 976271023}
-  - component: {fileID: 976271022}
   m_Layer: 5
   m_Name: StaminaSlider
   m_TagString: Untagged
@@ -1367,33 +1338,6 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
---- !u!234 &976271022
-SliderJoint2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 976271019}
-  m_Enabled: 1
-  serializedVersion: 4
-  m_EnableCollision: 0
-  m_ConnectedRigidBody: {fileID: 976271023}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_BreakAction: 3
-  m_AutoConfigureConnectedAnchor: 0
-  m_Anchor: {x: 0, y: 0}
-  m_ConnectedAnchor: {x: 0, y: 0}
-  m_AutoConfigureAngle: 1
-  m_Angle: 0
-  m_UseMotor: 0
-  m_Motor:
-    m_MotorSpeed: 0
-    m_MaximumMotorForce: 10000
-  m_UseLimits: 0
-  m_TranslationLimits:
-    m_LowerTranslation: 0
-    m_UpperTranslation: 0
 --- !u!50 &976271023
 Rigidbody2D:
   serializedVersion: 5
