@@ -12,6 +12,7 @@ public class PlayerMove : MonoBehaviour
         public float Gravity;
         public float RunStamina;
         public float JumpStamina;
+        public float DoubleJumpStamina;
     }
 
     public MoveConfig _config;
@@ -21,6 +22,7 @@ public class PlayerMove : MonoBehaviour
     private PlayerStats _stats;
 
     private float _yVelocity = 0f;   // 중력에 의해 누적될 y값 변수
+    private bool _canDoubleJump = false;
 
 
     private void Awake()
@@ -31,6 +33,12 @@ public class PlayerMove : MonoBehaviour
 
     private void Update()
     {
+        if (_controller.isGrounded)
+        {
+            _canDoubleJump = false;
+            if (_yVelocity < 0) _yVelocity = -1f;  // 지면에 붙여주는 안정 처리
+        }
+
         // 0. 중력을 누적한다.
         _yVelocity += _config.Gravity * Time.deltaTime;
 
@@ -50,6 +58,15 @@ public class PlayerMove : MonoBehaviour
         if (Input.GetButtonDown("Jump") && _controller.isGrounded)
         {
             _yVelocity = _stats.JumpPower.Value;
+
+        }
+        else if (_canDoubleJump == false && !_controller.isGrounded)
+        {
+            if (Input.GetButtonDown("Jump") && _stats.Stamina.TryConsume(_config.DoubleJumpStamina))
+            {
+                _canDoubleJump = true;
+                _yVelocity = _stats.JumpPower.Value;  // 2단 점프 파워
+            }
         }
 
         // - 카메라가 쳐다보는 방향으로 변환한다. (월드 -> 로컬)

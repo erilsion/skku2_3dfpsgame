@@ -774,9 +774,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _config:
-    Gravity: 0
-    RunStamina: 0
+    Gravity: -9.81
+    RunStamina: 5
     JumpStamina: 0
+    DoubleJumpStamina: 10
 --- !u!143 &397518661
 CharacterController:
   m_ObjectHideFlags: 0
