@@ -72,4 +72,13 @@ public class PlayerStats : MonoBehaviour
         if (_staminaSlider != null)
             _staminaSlider.value = _stamina.Value;
     }
+
+    public bool TryUseStamina(float amount)
+    {
+        if (_stamina.Value < amount)
+            return false;
+
+        _stamina.Decrease(amount);
+        return true;
+    }
 }

@@ -4,23 +4,30 @@
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMove : MonoBehaviour
 {
-    // 필요 속성: 이동 속도
+    [Header("이동 속도")]
     private float _playerSpeed = 7f;
     public float MoveSpeed = 7f;
     public float RunSpeed = 20f;
 
-    //점프력
+    [Header("점프력")]
     public float JumpPower = 5f;
 
-    // 중력
-    public float Gravity = -9.81f;
+    [Header("2단 점프")]
+    private float _doubleJumpCost = 20f;
+    private bool _hasDoubleJumped = false;
 
-    private CharacterController _controller;
+    [Header("중력")]
+    public float Gravity = -9.81f;
     private float _yVelocity = 0f;  // 중력에 의해 누적될 y값 변수
+
+    [Header("컨트롤러")]
+    private CharacterController _controller;
+    private PlayerStats _playerStats;
 
     private void Awake()
     {
         _controller = GetComponent<CharacterController>();
+        _playerStats = GetComponent<PlayerStats>();
         _playerSpeed = MoveSpeed;
     }
 
