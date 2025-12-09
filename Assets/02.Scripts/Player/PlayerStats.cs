@@ -9,8 +9,8 @@ public class PlayerStats : MonoBehaviour
     [Header("스태미나")]  // 소모 가능한 스탯
     public ConsumableStat Stamina;
     [SerializeField] private Slider _staminaSlider;
-    private float _staminaDecreasePerSecond = 20f;
-    private float _staminaRecoverPerSecond = 10f;
+    //private float _staminaDecreasePerSecond = 20f;
+    //private float _staminaRecoverPerSecond = 10f;
 
     [Header("체력")]  // 소모 가능한 스탯
     public ConsumableStat Health;
@@ -34,35 +34,34 @@ public class PlayerStats : MonoBehaviour
     private void Update()
     {
         SprintMovement();
-        UpdateUI();
     }
     void SprintMovement()
     {
-        bool canSprint = _stamina.Value > 0f;
+        //bool canSprint = _stamina.Value > 0f;
         bool isSprintKeyPressed = Input.GetKey(KeyCode.LeftShift);
 
-        bool isSprinting = isSprintKeyPressed && canSprint;
+        //bool isSprinting = isSprintKeyPressed && canSprint;
 
-        if (isSprinting)
+        //if (isSprinting)
         {
-            _stamina.Decrease(_staminaDecreasePerSecond * Time.deltaTime);
+            //_stamina.Decrease(_staminaDecreasePerSecond * Time.deltaTime);
 
-            if (_playerMove != null)
-                _playerMove.SetRunMode();
+            //if (_playerMove != null)
+            //    _playerMove.SetRunMode();
         }
-        else
+        //else
         {
-            _stamina.Increase(_staminaRecoverPerSecond * Time.deltaTime);
+            //_stamina.Increase(_staminaRecoverPerSecond * Time.deltaTime);
 
-            if (_playerMove != null)
-                _playerMove.SetWalkMode();
+            //if (_playerMove != null)
+            //    _playerMove.SetWalkMode();
         }
     }
 
     public bool TryUseStamina(float amount)
     {
-        if (Stamina.Value < amount)
-            return false;
+        //if (Stamina.Value < amount)
+        //    return false;
 
         Stamina.Decrease(amount);
         return true;

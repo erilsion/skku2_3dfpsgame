@@ -43,7 +43,7 @@ public class PlayerMove : MonoBehaviour
     private void Update()
     {
         // 0. 중력을 누적한다.
-        _yVelocity += Gravity * Time.deltaTime;
+        //_yVelocity += Gravity * Time.deltaTime;
 
         // 1. 키보드 입력 받기
         float x = Input.GetAxis("Horizontal");
