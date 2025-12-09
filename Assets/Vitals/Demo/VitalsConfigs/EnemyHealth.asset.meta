@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 741ff412407cb73408b8fd71bff1b8bb
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 247422
+  packageName: Vitals - Health and Stamina System
+  packageVersion: 2.1.0
+  assetPath: Assets/Vitals/Demo/VitalsConfigs/EnemyHealth.asset
+  uploadId: 594792

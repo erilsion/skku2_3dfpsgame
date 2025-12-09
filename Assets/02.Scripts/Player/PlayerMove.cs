@@ -5,7 +5,9 @@
 public class PlayerMove : MonoBehaviour
 {
     // 필요 속성: 이동 속도
+    private float _playerSpeed = 7f;
     public float MoveSpeed = 7f;
+    public float RunSpeed = 20f;
 
     //점프력
     public float JumpPower = 5f;
@@ -19,6 +21,7 @@ public class PlayerMove : MonoBehaviour
     private void Awake()
     {
         _controller = GetComponent<CharacterController>();
+        _playerSpeed = MoveSpeed;
     }
 
     private void Update()
@@ -49,6 +52,14 @@ public class PlayerMove : MonoBehaviour
         direction.y = _yVelocity;  // 중력 적용
 
         // 3. 방향으로 이동시키기
-        _controller.Move(direction * MoveSpeed * Time.deltaTime);
+        _controller.Move(direction * _playerSpeed * Time.deltaTime);
+    }
+    public void SetRunMode()
+    {
+        _playerSpeed = RunSpeed;
+    }
+    public void SetWalkMode()
+    {
+        _playerSpeed = MoveSpeed;
     }
 }

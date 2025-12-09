@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 1de9925ea81d7184c9ff41eb15757b5d
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 247422
+  packageName: Vitals - Health and Stamina System
+  packageVersion: 2.1.0
+  assetPath: Assets/Vitals/Docs/README.md
+  uploadId: 594792

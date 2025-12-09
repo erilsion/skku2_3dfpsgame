@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: c8343cfb560cf1d45b261edcfb1645a0
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 247422
+  packageName: Vitals - Health and Stamina System
+  packageVersion: 2.1.0
+  assetPath: Assets/Vitals/Demo/Scenes/HealthDemoScene.unity
+  uploadId: 594792

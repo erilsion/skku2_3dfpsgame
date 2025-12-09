@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 23e3694e1adf47ed847ab2a1deeba881
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: -100
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 247422
+  packageName: Vitals - Health and Stamina System
+  packageVersion: 2.1.0
+  assetPath: Assets/Vitals/Scripts/VitalsCore/VitalsConfig.cs
+  uploadId: 594792

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: a64536ec71477d74cb2dd34e33445b87
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 247422
+  packageName: Vitals - Health and Stamina System
+  packageVersion: 2.1.0
+  assetPath: Assets/Vitals/Demo/Prefabs/Enemy.prefab
+  uploadId: 594792

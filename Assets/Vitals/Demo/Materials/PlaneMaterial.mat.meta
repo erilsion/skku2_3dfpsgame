@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f851f420299a2184db690e3f7ba117b1
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 247422
+  packageName: Vitals - Health and Stamina System
+  packageVersion: 2.1.0
+  assetPath: Assets/Vitals/Demo/Materials/PlaneMaterial.mat
+  uploadId: 594792

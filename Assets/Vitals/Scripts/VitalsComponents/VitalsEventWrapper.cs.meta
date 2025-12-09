@@ -1,0 +1,10 @@
+﻿fileFormatVersion: 2
+guid: 18c62ac6ff0241c8b12ee07546adafdf
+timeCreated: 1682635141
+AssetOrigin:
+  serializedVersion: 1
+  productId: 247422
+  packageName: Vitals - Health and Stamina System
+  packageVersion: 2.1.0
+  assetPath: Assets/Vitals/Scripts/VitalsComponents/VitalsEventWrapper.cs
+  uploadId: 594792
