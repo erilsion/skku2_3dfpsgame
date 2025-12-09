@@ -14,25 +14,14 @@ public class PlayerMove : MonoBehaviour
         public float JumpStamina;
     }
 
-    public MoveConfig Config;
+    public MoveConfig _config;
 
-    [Header("이동 속도")]
-    private float _playerSpeed = 7f;
-    public float RunStamina = 3f;
 
-    [Header("점프력")]
-    public float JumpPower = 5f;
-
-    [Header("2단 점프")]
-    private float _doubleJumpCost = 20f;
-    private bool _hasDoubleJumped = false;
-
-    [Header("중력")]
-    private float _yVelocity = 0f;  // 중력에 의해 누적될 y값 변수
-
-    [Header("컨트롤러")]
     private CharacterController _controller;
     private PlayerStats _stats;
+
+    private float _yVelocity = 0f;   // 중력에 의해 누적될 y값 변수
+
 
     private void Awake()
     {
@@ -43,7 +32,7 @@ public class PlayerMove : MonoBehaviour
     private void Update()
     {
         // 0. 중력을 누적한다.
-        //_yVelocity += Gravity * Time.deltaTime;
+        _yVelocity += _config.Gravity * Time.deltaTime;
 
         // 1. 키보드 입력 받기
         float x = Input.GetAxis("Horizontal");
@@ -58,41 +47,24 @@ public class PlayerMove : MonoBehaviour
         direction.Normalize();
 
         // 점프
-        if (_yVelocity < 0f && _controller.isGrounded)
+        if (Input.GetButtonDown("Jump") && _controller.isGrounded)
         {
-            _hasDoubleJumped = false;
+            _yVelocity = _stats.JumpPower.Value;
         }
 
-        if (Input.GetButtonDown("Jump"))
-        {
-            if (_controller.isGrounded)
-            {
-                _yVelocity = JumpPower;
-            }
-            else
-            {
-                TryDoubleJump();
-            }
-        }
+        // - 카메라가 쳐다보는 방향으로 변환한다. (월드 -> 로컬)
+        direction = Camera.main.transform.TransformDirection(direction);
+        direction.y = _yVelocity; // 중력 적용
+
+
 
         float moveSpeed = _stats.MoveSpeed.Value;
-        if (Input.GetKey(KeyCode.LeftShift) && _stats.Stamina.TryConsume(RunStamina * Time.deltaTime))
+        if (Input.GetKey(KeyCode.LeftShift) && _stats.Stamina.TryConsume(_config.RunStamina * Time.deltaTime))
         {
             moveSpeed = _stats.RunSpeed.Value;
         }
 
-        // 2_2. 캐릭터(카메라)가 쳐다보는 방향으로 변환한다. (월드 -> 로컬)
-        direction = Camera.main.transform.TransformDirection(direction);
-        direction.y = _yVelocity;  // 중력 적용
-
-        // 3. 방향으로 이동시키기
-        _controller.Move(direction * _playerSpeed * Time.deltaTime);
-    }
-
-    private void TryDoubleJump()
-    {
-        if (_hasDoubleJumped) return;
-        _yVelocity = JumpPower;
-        _hasDoubleJumped = true;
+        // 3. 방향으로 이동시키기  
+        _controller.Move(direction * moveSpeed * Time.deltaTime);
     }
 }
