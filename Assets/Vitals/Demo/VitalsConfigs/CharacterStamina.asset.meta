@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 820d5dcd7f7f295469aac782f69ea773
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 247422
+  packageName: Vitals - Health and Stamina System
+  packageVersion: 2.1.0
+  assetPath: Assets/Vitals/Demo/VitalsConfigs/CharacterStamina.asset
+  uploadId: 594792

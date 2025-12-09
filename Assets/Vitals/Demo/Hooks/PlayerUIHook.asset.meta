@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 925a69f7b8a718e43ac5b349eb1b1f81
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 247422
+  packageName: Vitals - Health and Stamina System
+  packageVersion: 2.1.0
+  assetPath: Assets/Vitals/Demo/Hooks/PlayerUIHook.asset
+  uploadId: 594792

@@ -1,0 +1,10 @@
+﻿fileFormatVersion: 2
+guid: 740d5fcd25b94d89abc89660c5d2d390
+timeCreated: 1682705677
+AssetOrigin:
+  serializedVersion: 1
+  productId: 247422
+  packageName: Vitals - Health and Stamina System
+  packageVersion: 2.1.0
+  assetPath: Assets/Vitals/Scripts/VitalsComponents/HealthRegeneration.cs
+  uploadId: 594792

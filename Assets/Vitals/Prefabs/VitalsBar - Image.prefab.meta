@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 79bd2969acb05ff48add48e7ed2d3398
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 247422
+  packageName: Vitals - Health and Stamina System
+  packageVersion: 2.1.0
+  assetPath: Assets/Vitals/Prefabs/VitalsBar - Image.prefab
+  uploadId: 594792
