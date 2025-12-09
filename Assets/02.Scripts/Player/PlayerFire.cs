@@ -17,6 +17,13 @@ public class PlayerFire : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(1))
         {
+            if (BombManager.Instance.CurrentBombCount >= 5)
+            {
+                Debug.Log("폭탄 최대 개수 도달!");
+                return;
+            }
+            BombManager.Instance.AddBomb();
+
             Bomb bomb = Instantiate(_bombPrefab, _fireTransform.position, Quaternion.identity);
             Rigidbody rigidbody = bomb.GetComponent<Rigidbody>();
 

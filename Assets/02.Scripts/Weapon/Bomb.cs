@@ -9,6 +9,8 @@ public class Bomb : MonoBehaviour
         GameObject effectObject = Instantiate(ExplosionEffectPrefab);
         effectObject.transform.position = transform.position;
 
+        BombManager.Instance.RemoveBomb();
+
         Destroy(gameObject);
     }
 }
