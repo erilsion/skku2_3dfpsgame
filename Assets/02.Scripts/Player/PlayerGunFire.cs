@@ -25,6 +25,7 @@ public class PlayerGunFire : MonoBehaviour
     [Header("총알 개수 제한")]
     [SerializeField] private int _maxBullet = 30;
     private int _currentBullet = 0;
+    private int _reserveBullet = 150;
 
     private void Start()
     {
@@ -44,8 +45,7 @@ public class PlayerGunFire : MonoBehaviour
 
             if (_reloadTimer <= 0f)
             {
-                _currentBullet = _maxBullet;
-                Debug.Log("재장전 완료!");
+                ReloadFinish();
                 _isReloading = false;
                 _uiReloadBar.SetReloadProgress(1f);
             }
@@ -54,6 +54,9 @@ public class PlayerGunFire : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.R) && _currentBullet < _maxBullet)
         {
+            if (_currentBullet >= _maxBullet) return;
+            if (_reserveBullet <= 0) return;
+
             _isReloading = true;
             _reloadTimer = _reloadTime;
             _uiReloadBar.StartReload();
@@ -100,5 +103,15 @@ public class PlayerGunFire : MonoBehaviour
                 _fireTimer = 0f;
             }
         }
+    }
+    private void ReloadFinish()
+    {
+        int needAmmunition = _maxBullet - _currentBullet;
+        int ammunitionToLoad = Mathf.Min(needAmmunition, _reserveBullet);
+
+        _currentBullet += ammunitionToLoad;
+        _reserveBullet -= ammunitionToLoad;
+
+        Debug.Log($"재장전 완료! 탄창: {_currentBullet} | 예비탄: {_reserveBullet}");
     }
 }
