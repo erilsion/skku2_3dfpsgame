@@ -7,9 +7,6 @@ public class PlayerBombFire : MonoBehaviour
     [Header("발사 위치")]
     [SerializeField] private Transform _fireTransform;
 
-    [Header("발사할 폭탄")]
-    [SerializeField] private Bomb _bombPrefab;
-
     [Header("던질 힘")]
     [SerializeField] private float _throwPower = 15f;
 
@@ -23,7 +20,7 @@ public class PlayerBombFire : MonoBehaviour
                 return;
             }
 
-            Bomb bomb = Instantiate(_bombPrefab, _fireTransform.position, Quaternion.identity);
+            GameObject bomb = BombPool.Instance.SpawnBomb(_fireTransform.position, Quaternion.identity);
             BombManager.Instance.AddBomb();
             Rigidbody rigidbody = bomb.GetComponent<Rigidbody>();
 

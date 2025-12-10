@@ -3,6 +3,21 @@
 public class Bomb : MonoBehaviour
 {
     public GameObject ExplosionEffectPrefab;
+    private Rigidbody _rigidbody;
+
+    private void Awake()
+    {
+        _rigidbody = GetComponent<Rigidbody>();
+    }
+
+    private void OnEnable()
+    {
+        if (_rigidbody != null)
+        {
+            _rigidbody.linearVelocity = Vector3.zero;
+            _rigidbody.angularVelocity = Vector3.zero;
+        }
+    }
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -11,6 +26,6 @@ public class Bomb : MonoBehaviour
 
         BombManager.Instance.RemoveBomb();
 
-        Destroy(gameObject);
+        BombPool.Instance.ReturnToPool(gameObject);
     }
 }

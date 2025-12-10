@@ -26,17 +26,19 @@ public class PlayerGunFire : MonoBehaviour
 
                 // 파티클 생성과 플레이 방식
                 // 1. Instantiate 방식 (+ 풀링) -> 한 화면에 여러가지 수정 후 여러 개 그릴 경우. 새로 생성 (메모리, CPU)
-                // 2. 하나를 캐싱해두고 Play    -> 한 화면에 한번만 그릴 경우. 단점: 재실행이므로 기존 게 삭제
-                // 3. 하나를 캐싱해두고 Emit    -> 한 화면에 위치만 수정 후 여러 개 그릴 경우
+                // 2. 하나를 캐싱해두고 Play    -> 인스펙터 설정 그대로 그릴 경우. 한 화면에 한번만 그릴 경우. 단점: 재실행이므로 기존 게 삭제
+                // 3. 하나를 캐싱해두고 Emit    -> 인스펙터 설정을 수정한 후 그릴 경우. 한 화면에 위치만 수정 후 여러 개 그릴 경우
 
-                //_hitEffect.transform.position = hitInfo.point;
-                //_hitEffect.transform.forward = hitInfo.normal;
+                _hitEffect.transform.position = hitInfo.point;
+                _hitEffect.transform.forward = hitInfo.normal;
 
-                ParticleSystem.EmitParams emitParams = new ParticleSystem.EmitParams();
-                emitParams.position = hitInfo.point;
-                emitParams.rotation3D = Quaternion.LookRotation(hitInfo.normal).eulerAngles;
+                _hitEffect.Play();
 
-                _hitEffect.Emit(emitParams, 1);   // 커스텀할 정보, 분출 횟수
+                // ParticleSystem.EmitParams emitParams = new ParticleSystem.EmitParams();
+                // emitParams.position = hitInfo.point;
+                // emitParams.rotation3D = Quaternion.LookRotation(hitInfo.normal).eulerAngles;
+
+                // _hitEffect.Emit(emitParams, 1);    커스텀할 정보, 분출 횟수
             }
         }
     }
