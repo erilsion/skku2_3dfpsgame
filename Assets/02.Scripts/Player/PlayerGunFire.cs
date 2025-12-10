@@ -100,6 +100,8 @@ public class PlayerGunFire : MonoBehaviour
 
                 // _hitEffect.Emit(emitParams, 1);    커스텀할 정보, 분출 횟수
 
+                CameraRecoil.Instance.DoRecoil();
+
                 _fireTimer = 0f;
             }
         }
