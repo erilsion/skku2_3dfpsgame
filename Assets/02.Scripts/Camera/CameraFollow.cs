@@ -6,7 +6,7 @@ using DG.Tweening;
 public class CameraFollow : MonoBehaviour
 {
     public Transform Target;
-    public Vector3 TpsOffset = new Vector3(0, 4, -8);
+    public Vector3 TpsOffset = new Vector3(0, 2, -6);
     private float _switchDuration = 0.4f;
 
     private bool _isFPS = false;
