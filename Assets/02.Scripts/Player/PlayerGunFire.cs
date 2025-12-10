@@ -12,7 +12,7 @@ public class PlayerGunFire : MonoBehaviour
 
     [Header("쿨타임")]
     private float _fireTimer = 0f;
-    private float _fireCooltime = 0.3f;
+    private float _fireCooltime = 0.4f;
 
     [Header("재장전 시간")]
     [SerializeField] private float _reloadTime = 1.6f;
