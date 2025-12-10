@@ -12,12 +12,15 @@ public class PlayerGunFire : MonoBehaviour
 
     [Header("쿨타임")]
     private float _fireTimer = 0f;
-    private float _fireCooltime = 0.2f;
+    private float _fireCooltime = 0.3f;
 
     [Header("재장전 시간")]
     [SerializeField] private float _reloadTime = 1.6f;
     private float _reloadTimer = 0f;
     private bool _isReloading = false;
+
+    [Header("UI")]
+    [SerializeField] private UI_GunReload _uiReloadBar;
 
     [Header("총알 개수 제한")]
     [SerializeField] private int _maxBullet = 30;
@@ -36,11 +39,15 @@ public class PlayerGunFire : MonoBehaviour
         {
             _reloadTimer -= Time.deltaTime;
 
+            float progress = 1f - (_reloadTimer / _reloadTime);
+            _uiReloadBar.SetReloadProgress(progress);
+
             if (_reloadTimer <= 0f)
             {
                 _currentBullet = _maxBullet;
                 Debug.Log("재장전 완료!");
                 _isReloading = false;
+                _uiReloadBar.SetReloadProgress(1f);
             }
             return;
         }
@@ -49,6 +56,7 @@ public class PlayerGunFire : MonoBehaviour
         {
             _isReloading = true;
             _reloadTimer = _reloadTime;
+            _uiReloadBar.StartReload();
             return;
         }
 
