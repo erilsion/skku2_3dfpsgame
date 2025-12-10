@@ -7,7 +7,7 @@ public class PoolBase : MonoBehaviour
     [SerializeField] protected GameObject _prefab;
 
     [Header("초기 생성 개수")]
-    [SerializeField] protected int _initialSize = 10;
+    [SerializeField] protected int _initialSize = 8;
 
     // 실제로 오브젝트를 저장하는 큐
     protected Queue<GameObject> _pool = new Queue<GameObject>();

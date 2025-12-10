@@ -4,14 +4,28 @@ public class PlayerGunFire : MonoBehaviour
 {
     // 목표: 마우스 왼쪽 버튼을 누르면 카메라(플레이어)가 바라보는 방향으로 총알을 발사하고 싶다. (총알을 날리고 싶다.)
 
+    [Header("발사 위치")]
     [SerializeField] private Transform _fireTransform;
+
+    [Header("피격 이펙트")]
     [SerializeField] private ParticleSystem _hitEffect;
+
+    [Header("탄창 제한")]
+    [SerializeField] private int _maxBullet = 30;
+    private int _currentBullet;
+
+    private void Start()
+    {
+        _currentBullet = _maxBullet;
+    }
 
     private void Update()
     {
         // 1. 마우스 왼쪽 버튼이 눌린다면
         if(Input.GetMouseButton(0))
         {
+            if (_currentBullet <= 0) return;
+
             // 2. Ray를 생성하고 발사할 위치, 방향, 거리를 설정한다. (쏜다.)
             Ray ray = new Ray(_fireTransform.position, Camera.main.transform.forward);
 
@@ -41,5 +55,15 @@ public class PlayerGunFire : MonoBehaviour
                 // _hitEffect.Emit(emitParams, 1);    커스텀할 정보, 분출 횟수
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            Reload();
+        }
+    }
+
+    private void Reload()
+    {
+        _currentBullet = _maxBullet;
     }
 }
