@@ -10,9 +10,18 @@ public class PlayerGunFire : MonoBehaviour
     [Header("피격 이펙트")]
     [SerializeField] private ParticleSystem _hitEffect;
 
-    [Header("탄창 제한")]
+    [Header("쿨타임")]
+    private float _fireTimer = 0f;
+    private float _fireCooltime = 0.2f;
+
+    [Header("재장전 시간")]
+    [SerializeField] private float _reloadTime = 1.6f;
+    private float _reloadTimer = 0f;
+    private bool _isReloading = false;
+
+    [Header("총알 개수 제한")]
     [SerializeField] private int _maxBullet = 30;
-    private int _currentBullet;
+    private int _currentBullet = 0;
 
     private void Start()
     {
@@ -21,8 +30,32 @@ public class PlayerGunFire : MonoBehaviour
 
     private void Update()
     {
+        _fireTimer += Time.deltaTime;
+
+        if (_isReloading)
+        {
+            _reloadTimer -= Time.deltaTime;
+
+            if (_reloadTimer <= 0f)
+            {
+                _currentBullet = _maxBullet;
+                Debug.Log("재장전 완료!");
+                _isReloading = false;
+            }
+            return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.R) && _currentBullet < _maxBullet)
+        {
+            _isReloading = true;
+            _reloadTimer = _reloadTime;
+            return;
+        }
+
+        if (_fireTimer < _fireCooltime) return;
+
         // 1. 마우스 왼쪽 버튼이 눌린다면
-        if(Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0))
         {
             if (_currentBullet <= 0) return;
 
@@ -37,6 +70,8 @@ public class PlayerGunFire : MonoBehaviour
             if (isHit)
             {
                 Debug.Log(hitInfo.transform.name);
+
+                _currentBullet--;
 
                 // 파티클 생성과 플레이 방식
                 // 1. Instantiate 방식 (+ 풀링) -> 한 화면에 여러가지 수정 후 여러 개 그릴 경우. 새로 생성 (메모리, CPU)
@@ -53,17 +88,9 @@ public class PlayerGunFire : MonoBehaviour
                 // emitParams.rotation3D = Quaternion.LookRotation(hitInfo.normal).eulerAngles;
 
                 // _hitEffect.Emit(emitParams, 1);    커스텀할 정보, 분출 횟수
+
+                _fireTimer = 0f;
             }
         }
-
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            Reload();
-        }
-    }
-
-    private void Reload()
-    {
-        _currentBullet = _maxBullet;
     }
 }
