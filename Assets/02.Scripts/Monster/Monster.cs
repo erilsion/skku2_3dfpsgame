@@ -62,6 +62,16 @@ public class Monster : MonoBehaviour, IDamageable
     public float DeathDuration = 2f;
     private Vector3 _knockbackDirection;
 
+    [Header("순찰 관련")]
+    [SerializeField] private Transform[] _patrolPoints;
+    [SerializeField] private float _patrolWaitTime = 3f;
+    private int _currentPatrolIndex = 0;
+    private float _patrolWaitTimer = 0f;
+    private float _patrolArriveDistance = 0.1f;
+    private float _idleToPatrolDelay = 2f;
+    private float _idleTimer = 0f;
+
+
     private void Start()
     {
         _spawnPosition = transform.position;
@@ -92,6 +102,10 @@ public class Monster : MonoBehaviour, IDamageable
             case EMonsterState.Attack:
                 Attack();
                 break;
+
+            case EMonsterState.Patrol:
+                Patrol();
+                break;
         }
     }
 
@@ -106,6 +120,14 @@ public class Monster : MonoBehaviour, IDamageable
         {
             State = EMonsterState.Trace;
             Debug.Log("상태 전환: Idle -> Trace");
+        }
+
+        _idleTimer += Time.deltaTime;
+        if (_idleTimer >= _idleToPatrolDelay && _patrolPoints != null && _patrolPoints.Length > 0)
+        {
+            State = EMonsterState.Patrol;
+            Debug.Log("상태 전환: Idle -> Patrol");
+            _idleTimer = 0f;
         }
     }
 
@@ -160,7 +182,7 @@ public class Monster : MonoBehaviour, IDamageable
             State = EMonsterState.Idle;
             return;
         }
- 
+
         float distance = Vector3.Distance(transform.position, _player.transform.position);
         if (distance > AttackDistance)
         {
@@ -183,7 +205,7 @@ public class Monster : MonoBehaviour, IDamageable
 
     public bool TryTakeDamage(float Damage)
     {
-        if(State == EMonsterState.Hit || State == EMonsterState.Death)
+        if (State == EMonsterState.Hit || State == EMonsterState.Death)
         {
             return false;
         }
@@ -236,5 +258,47 @@ public class Monster : MonoBehaviour, IDamageable
         _controller.Move(_knockbackDirection * KnockbackForce * Time.deltaTime);
         yield return new WaitForSeconds(DeathDuration);
         Destroy(gameObject);
+    }
+
+    private void Patrol()
+    {
+        if (_player != null)
+        {
+            float playerDistance = Vector3.Distance(transform.position, _player.transform.position);
+            if (playerDistance <= DetectDistance)
+            {
+                State = EMonsterState.Trace;
+                Debug.Log("상태 전환: Patrol -> Trace");
+                return;
+            }
+        }
+
+        if (_patrolPoints == null || _patrolPoints.Length == 0)
+        {
+            State = EMonsterState.Idle;
+            return;
+        }
+
+        Transform targetPoint = _patrolPoints[_currentPatrolIndex];
+        float distance = Vector3.Distance(transform.position, targetPoint.position);
+
+        if (distance <= _patrolArriveDistance)
+        {
+            _patrolWaitTimer += Time.deltaTime;
+            if (_patrolWaitTimer >= _patrolWaitTime)
+            {
+                _currentPatrolIndex++;
+                if (_currentPatrolIndex >= _patrolPoints.Length)
+                {
+                    _currentPatrolIndex = 0;
+                }
+
+                _patrolWaitTimer = 0f;
+            }
+            return;
+        }
+
+        Vector3 direction = (targetPoint.position - transform.position).normalized;
+        _controller.Move(direction * MoveSpeed * Time.deltaTime);
     }
 }
