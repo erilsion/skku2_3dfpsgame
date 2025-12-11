@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 public class Monster : MonoBehaviour
@@ -31,6 +32,7 @@ public class Monster : MonoBehaviour
     [SerializeField] private CharacterController _controller;
 
     public float Health = 100f;
+    public float Damage = 10f;
 
     public float MoveSpeed = 5f;
     public float AttackSpeed = 2f;
@@ -68,6 +70,8 @@ public class Monster : MonoBehaviour
     {
         // 대기하는 상태
         // Todo.Idle 애니메이션 실행
+        if (_player == null) return;
+
         if (Vector3.Distance(transform.position, _player.transform.position) <= DetectDistance)
         {
             State = EMonsterState.Trace;
@@ -79,6 +83,11 @@ public class Monster : MonoBehaviour
     {
         // 플레이어를 쫓아가는 상태
         // Todo.Run 애니메이션 실행
+        if (_player == null)
+        {
+            State = EMonsterState.Idle;
+            return;
+        }
 
         float distance = Vector3.Distance(transform.position, _player.transform.position);
         // 1. 방향을 구한다.
@@ -100,7 +109,14 @@ public class Monster : MonoBehaviour
     {
         // 플레이어를 공격하는 상태
         // Todo.Attack 애니메이션 실행
+        if (_player == null)
+        {
+            State = EMonsterState.Idle;
+            return;
+        }
 
+        PlayerStats player = _player.GetComponent<PlayerStats>();
+ 
         float distance = Vector3.Distance(transform.position, _player.transform.position);
         if (distance > AttackDistance)
         {
@@ -111,7 +127,12 @@ public class Monster : MonoBehaviour
         AttackTimer += Time.deltaTime;
         if (AttackTimer >= AttackSpeed)
         {
-            Debug.Log("플레이어 공격!");
+            if (player != null)
+            {
+                player.TryTakeDamage(Damage);
+                Debug.Log("플레이어 공격!");
+            }
+
             AttackTimer = 0f;
         }
     }

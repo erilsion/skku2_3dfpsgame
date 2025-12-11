@@ -53,11 +53,19 @@ public class ConsumableStat
     public void DecreaseMax(float amount)
     {
         _maxValue -= amount;
+        if (_maxValue < 0)
+        {
+            _maxValue = 0;
+        }
     }
 
     public void Decrease(float amount)
     {
         _value -= amount;
+        if (_value < 0)
+        {
+            _value = 0;
+        }
     }
 
     public void SetMaxValue(float value)
@@ -72,6 +80,12 @@ public class ConsumableStat
         if (_value > _maxValue)
         {
             _value = _maxValue;
+        }
+
+
+        if (_value < 0)
+        {
+            _value = 0;
         }
     }
 }

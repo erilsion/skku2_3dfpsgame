@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 
 // 플레이어의 '스탯'을 관리하는 컴포넌트
 public class PlayerStats : MonoBehaviour
@@ -36,5 +35,18 @@ public class PlayerStats : MonoBehaviour
 
         Health.Regenerate(deltaTime);
         Stamina.Regenerate(deltaTime);
+    }
+
+    public bool TryTakeDamage(float Damage)
+    {
+        Health.Decrease(Damage);
+
+        if (Health.Value <= 0)
+        {
+            Health.SetValue(0);
+            Destroy(gameObject);
+        }
+
+        return true;
     }
 }

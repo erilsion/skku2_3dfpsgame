@@ -1031,6 +1031,7 @@ MonoBehaviour:
   _reloadTime: 1.6
   _uiReloadBar: {fileID: 1710252187}
   _maxBullet: 30
+  Damage: 10
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -1787,6 +1788,8 @@ MonoBehaviour:
   State: 0
   _player: {fileID: 397518654}
   _controller: {fileID: 1170164523}
+  Health: 100
+  Damage: 10
   MoveSpeed: 5
   AttackSpeed: 2
   AttackTimer: 0
