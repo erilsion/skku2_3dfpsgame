@@ -1794,6 +1794,8 @@ MonoBehaviour:
   AttackSpeed: 2
   AttackTimer: 0
   DetectDistance: 3
+  ComebackDistance: 8
+  CombackPosition: 0.1
   AttackDistance: 1.2
 --- !u!1 &1186628031
 GameObject:

@@ -30,6 +30,7 @@ public class Monster : MonoBehaviour
     public EMonsterState State = EMonsterState.Idle;
     [SerializeField] private GameObject _player;
     [SerializeField] private CharacterController _controller;
+    private Vector3 _spawnPosition;
 
     public float Health = 100f;
     public float Damage = 10f;
@@ -39,7 +40,14 @@ public class Monster : MonoBehaviour
     public float AttackTimer = 0f;
 
     public float DetectDistance = 4f;
+    public float ComebackDistance = 8f;
+    public float CombackPosition = 0.1f;
     public float AttackDistance = 1.5f;
+
+    private void Start()
+    {
+        _spawnPosition = transform.position;
+    }
 
     private void Update()
     {
@@ -98,11 +106,27 @@ public class Monster : MonoBehaviour
         {
             State = EMonsterState.Attack;
         }
+        else if (distance > ComebackDistance)
+        {
+            State = EMonsterState.Comeback;
+            Debug.Log("상태 전환: Trace → Comeback");
+        }
     }
 
     private void Comeback()
     {
         // 제자리로 돌아간다.
+        float distance = Vector3.Distance(transform.position, _spawnPosition);
+
+        if (distance < CombackPosition)
+        {
+            State = EMonsterState.Idle;
+            Debug.Log("상태 전환: Comeback → Idle");
+            return;
+        }
+
+        Vector3 direction = (_spawnPosition - transform.position).normalized;
+        _controller.Move(direction * MoveSpeed * Time.deltaTime);
     }
 
     private void Attack()
