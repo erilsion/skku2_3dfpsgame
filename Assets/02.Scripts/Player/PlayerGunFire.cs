@@ -27,6 +27,9 @@ public class PlayerGunFire : MonoBehaviour
     private int _currentBullet = 0;
     private int _reserveBullet = 150;
 
+    [Header("데미지")]
+    [SerializeField] private int Damage = 10;
+
     private void Start()
     {
         _currentBullet = _maxBullet;
@@ -99,6 +102,12 @@ public class PlayerGunFire : MonoBehaviour
                 // emitParams.rotation3D = Quaternion.LookRotation(hitInfo.normal).eulerAngles;
 
                 // _hitEffect.Emit(emitParams, 1);    커스텀할 정보, 분출 횟수
+
+                Monster monster = hitInfo.collider.gameObject.GetComponent<Monster>();
+                if (monster != null)
+                {
+                    monster.TryTakeDamage(Damage);
+                }
 
                 CameraRecoil.Instance.DoRecoil();
 

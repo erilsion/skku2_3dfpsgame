@@ -1,4 +1,4 @@
-﻿using Unity.VisualScripting;
+﻿using System.Collections;
 using UnityEngine;
 
 public class Monster : MonoBehaviour
@@ -30,6 +30,8 @@ public class Monster : MonoBehaviour
     [SerializeField] private GameObject _player;
     [SerializeField] private CharacterController _controller;
 
+    public float Health = 100f;
+
     public float MoveSpeed = 5f;
     public float AttackSpeed = 2f;
     public float AttackTimer = 0f;
@@ -56,14 +58,6 @@ public class Monster : MonoBehaviour
 
             case EMonsterState.Attack:
                 Attack();
-                break;
-
-            case EMonsterState.Hit:
-                Hit();
-                break;
-
-            case EMonsterState.Death:
-                Death();
                 break;
         }
     }
@@ -105,6 +99,7 @@ public class Monster : MonoBehaviour
     private void Attack()
     {
         // 플레이어를 공격하는 상태
+        // Todo.Attack 애니메이션 실행
 
         float distance = Vector3.Distance(transform.position, _player.transform.position);
         if (distance > AttackDistance)
@@ -121,13 +116,52 @@ public class Monster : MonoBehaviour
         }
     }
 
-    private void Hit()
+    public bool TryTakeDamage(float Damage)
     {
-        // 피격당한다.
+        if(State == EMonsterState.Hit || State == EMonsterState.Death)
+        {
+            return false;
+        }
+
+        Health -= Damage;
+
+        if (Health > 0f)
+        {
+            State = EMonsterState.Hit;
+            Debug.Log("상태 전환: 어떤 상태 -> Hit");
+            StartCoroutine(Hit_Coroutine());
+        }
+        else
+        {
+            State = EMonsterState.Death;
+            Debug.Log("상태 전환: 어떤 상태 -> Death");
+            StartCoroutine(Death_Coroutine());
+        }
+
+        return true;
     }
 
-    private void Death()
+    private IEnumerator Hit_Coroutine()
     {
-        // 죽는다.
+        // Todo.Hit 애니메이션 실행
+
+        yield return new WaitForSeconds(0.2f);
+
+        if (Vector3.Distance(transform.position, _player.transform.position) <= DetectDistance)
+        {
+            State = EMonsterState.Trace;
+        }
+        else
+        {
+            State = EMonsterState.Idle;
+        }
+    }
+
+    private IEnumerator Death_Coroutine()
+    {
+        // Todo.Death 애니메이션 실행
+
+        yield return new WaitForSeconds(2f);
+        Destroy(gameObject);
     }
 }
