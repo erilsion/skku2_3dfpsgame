@@ -1,7 +1,12 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
+using static PlayerGunFire;
 
-public class Monster : MonoBehaviour
+public class Monster : MonoBehaviour, IDamageable
 {
+    // 유한 상태머신 설명
+    #region Comment
+    /*
     // 목표: 처음에는 가만히 있지만 플레이어가 다가가면 쫓아오는 좀비 몬스터를 만들고 싶다.
     //       ㄴ 쫓아오다가 너무 멀어지면 제자리로 돌아간다.
 
@@ -19,13 +24,53 @@ public class Monster : MonoBehaviour
 
     // Finite State Machine(유한 상태머신)
     // 유한개의 상태를 가지고 있고, 상태마다 동작이 다르다.
+    */
+    #endregion
 
+    [Header("기본 상태")]
     public EMonsterState State = EMonsterState.Idle;
+
+    [Header("컴포넌트 옵션")]
     [SerializeField] private GameObject _player;
     [SerializeField] private CharacterController _controller;
 
+    [Header("처음 생성 위치")]
+    private Vector3 _spawnPosition;
+
+    [Header("플레이어 옵션")]
+    private Transform _playerTransform;
+    private PlayerStats _playerStats;
+
+    [Header("능력치")]
+    [SerializeField] private float _health = 100f;
+    [SerializeField] private float _damage = 10f;
+
+    [Header("이동 관련")]
     public float MoveSpeed = 5f;
-    public float DetectDistance = 3f;
+    public float AttackSpeed = 2f;
+    public float AttackTimer = 0f;
+
+    [Header("추격 관련")]
+    public float DetectDistance = 4f;
+    public float ComebackDistance = 8f;
+    public float ComebackPosition = 0.1f;
+    public float AttackDistance = 1.5f;
+
+    [Header("넉백 관련")]
+    public float KnockbackForce = 6f;
+    public float KnockbackDuration = 0.4f;
+    public float DeathDuration = 2f;
+    private Vector3 _knockbackDirection;
+
+    private void Start()
+    {
+        _spawnPosition = transform.position;
+        if (_player != null)
+        {
+            _playerStats = _player.GetComponent<PlayerStats>();
+            _playerTransform = _player.transform;
+        }
+    }
 
     private void Update()
     {
@@ -47,20 +92,11 @@ public class Monster : MonoBehaviour
             case EMonsterState.Attack:
                 Attack();
                 break;
-
-            case EMonsterState.Hit:
-                Hit();
-                break;
-
-            case EMonsterState.Death:
-                Death();
-                break;
         }
     }
 
     // 1. 함수는 한 가지 일만 잘해야 한다.
     // 2. 상태별 행동을 함수로 만든다.
-
     private void Idle()
     {
         // 대기하는 상태
@@ -77,30 +113,128 @@ public class Monster : MonoBehaviour
     {
         // 플레이어를 쫓아가는 상태
         // Todo.Run 애니메이션 실행
+        if (_player == null)
+        {
+            State = EMonsterState.Idle;
+            return;
+        }
 
+        float distance = Vector3.Distance(transform.position, _player.transform.position);
         // 1. 방향을 구한다.
         Vector3 direction = (_player.transform.position - transform.position).normalized;
         // 2. 방향을 따라 이동한다.
         _controller.Move(direction * MoveSpeed * Time.deltaTime);
+        if (distance <= AttackDistance)
+        {
+            State = EMonsterState.Attack;
+        }
+        else if (distance > ComebackDistance)
+        {
+            State = EMonsterState.Comeback;
+            Debug.Log("상태 전환: Trace → Comeback");
+        }
     }
 
     private void Comeback()
     {
         // 제자리로 돌아간다.
+        float distance = Vector3.Distance(transform.position, _spawnPosition);
+
+        if (distance < ComebackPosition)
+        {
+            State = EMonsterState.Idle;
+            Debug.Log("상태 전환: Comeback → Idle");
+            return;
+        }
+
+        Vector3 direction = (_spawnPosition - transform.position).normalized;
+        _controller.Move(direction * MoveSpeed * Time.deltaTime);
     }
 
     private void Attack()
     {
-        // 공격한다.
+        // 플레이어를 공격하는 상태
+        // Todo.Attack 애니메이션 실행
+        if (_player == null)
+        {
+            State = EMonsterState.Idle;
+            return;
+        }
+ 
+        float distance = Vector3.Distance(transform.position, _player.transform.position);
+        if (distance > AttackDistance)
+        {
+            State = EMonsterState.Trace;
+            return;
+        }
+
+        AttackTimer += Time.deltaTime;
+        if (AttackTimer >= AttackSpeed)
+        {
+            if (_playerStats != null)
+            {
+                _playerStats.TryTakeDamage(_damage);
+                Debug.Log("플레이어 공격!");
+            }
+
+            AttackTimer = 0f;
+        }
     }
 
-    private void Hit()
+    public bool TryTakeDamage(float Damage)
     {
-        // 피격당한다.
+        if(State == EMonsterState.Hit || State == EMonsterState.Death)
+        {
+            return false;
+        }
+
+        _health -= Damage;
+        _knockbackDirection = (transform.position - _player.transform.position).normalized;
+
+        if (_health > 0f)
+        {
+            State = EMonsterState.Hit;
+            Debug.Log("상태 전환: 어떤 상태 -> Hit");
+            StartCoroutine(Hit_Coroutine());
+        }
+        else
+        {
+            State = EMonsterState.Death;
+            Debug.Log("상태 전환: 어떤 상태 -> Death");
+            StartCoroutine(Death_Coroutine());
+        }
+
+        return true;
     }
 
-    private void Death()
+    private IEnumerator Hit_Coroutine()
     {
-        // 죽는다.
+        // Todo.Hit 애니메이션 실행
+
+        float timer = 0f;
+        while (timer < KnockbackDuration)
+        {
+            _controller.Move(_knockbackDirection * KnockbackForce * Time.deltaTime);
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        if (Vector3.Distance(transform.position, _player.transform.position) <= DetectDistance)
+        {
+            State = EMonsterState.Trace;
+        }
+        else
+        {
+            State = EMonsterState.Idle;
+        }
+    }
+
+    private IEnumerator Death_Coroutine()
+    {
+        // Todo.Death 애니메이션 실행
+
+        _controller.Move(_knockbackDirection * KnockbackForce * Time.deltaTime);
+        yield return new WaitForSeconds(DeathDuration);
+        Destroy(gameObject);
     }
 }

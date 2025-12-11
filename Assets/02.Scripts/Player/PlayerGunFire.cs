@@ -27,6 +27,9 @@ public class PlayerGunFire : MonoBehaviour
     private int _currentBullet = 0;
     private int _reserveBullet = 150;
 
+    [Header("데미지")]
+    [SerializeField] private int _damage = 10;
+
     private void Start()
     {
         _currentBullet = _maxBullet;
@@ -100,6 +103,11 @@ public class PlayerGunFire : MonoBehaviour
 
                 // _hitEffect.Emit(emitParams, 1);    커스텀할 정보, 분출 횟수
 
+                if (hitInfo.collider.TryGetComponent<IDamageable>(out var damageable))
+                {
+                    damageable.TryTakeDamage(_damage);
+                }
+
                 CameraRecoil.Instance.DoRecoil();
 
                 _fireTimer = 0f;
@@ -115,5 +123,10 @@ public class PlayerGunFire : MonoBehaviour
         _reserveBullet -= ammunitionToLoad;
 
         Debug.Log($"재장전 완료! 탄창: {_currentBullet} | 예비탄: {_reserveBullet}");
+    }
+
+    public interface IDamageable
+    {
+        bool TryTakeDamage(float damage);
     }
 }
