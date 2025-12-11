@@ -28,7 +28,7 @@ public class PlayerGunFire : MonoBehaviour
     private int _reserveBullet = 150;
 
     [Header("데미지")]
-    [SerializeField] private int Damage = 10;
+    [SerializeField] private int _damage = 10;
 
     private void Start()
     {
@@ -103,10 +103,9 @@ public class PlayerGunFire : MonoBehaviour
 
                 // _hitEffect.Emit(emitParams, 1);    커스텀할 정보, 분출 횟수
 
-                Monster monster = hitInfo.collider.gameObject.GetComponent<Monster>();
-                if (monster != null)
+                if (hitInfo.collider.TryGetComponent<IDamageable>(out var damageable))
                 {
-                    monster.TryTakeDamage(Damage);
+                    damageable.TryTakeDamage(_damage);
                 }
 
                 CameraRecoil.Instance.DoRecoil();
@@ -124,5 +123,10 @@ public class PlayerGunFire : MonoBehaviour
         _reserveBullet -= ammunitionToLoad;
 
         Debug.Log($"재장전 완료! 탄창: {_currentBullet} | 예비탄: {_reserveBullet}");
+    }
+
+    public interface IDamageable
+    {
+        bool TryTakeDamage(float damage);
     }
 }

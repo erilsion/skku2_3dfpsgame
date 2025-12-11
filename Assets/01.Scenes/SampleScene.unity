@@ -1788,8 +1788,8 @@ MonoBehaviour:
   State: 0
   _player: {fileID: 397518654}
   _controller: {fileID: 1170164523}
-  Health: 100
-  Damage: 10
+  _health: 100
+  _damage: 10
   MoveSpeed: 5
   AttackSpeed: 2
   AttackTimer: 0
@@ -1797,7 +1797,7 @@ MonoBehaviour:
   ComebackDistance: 8
   CombackPosition: 0.1
   AttackDistance: 1.2
-  KnockbackForce: 40
+  KnockbackForce: 6
   KnockbackDuration: 0.4
   DeathDuration: 2
 --- !u!1 &1186628031

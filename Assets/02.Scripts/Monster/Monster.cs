@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using UnityEngine;
+using static PlayerGunFire;
 
-public class Monster : MonoBehaviour
+public class Monster : MonoBehaviour, IDamageable
 {
     // 유한 상태머신 설명
     #region Comment
@@ -36,9 +37,13 @@ public class Monster : MonoBehaviour
     [Header("처음 생성 위치")]
     private Vector3 _spawnPosition;
 
+    [Header("플레이어 옵션")]
+    private Transform _playerTransform;
+    private PlayerStats _playerStats;
+
     [Header("능력치")]
-    public float Health = 100f;
-    public float Damage = 10f;
+    [SerializeField] private float _health = 100f;
+    [SerializeField] private float _damage = 10f;
 
     [Header("이동 관련")]
     public float MoveSpeed = 5f;
@@ -48,11 +53,11 @@ public class Monster : MonoBehaviour
     [Header("추격 관련")]
     public float DetectDistance = 4f;
     public float ComebackDistance = 8f;
-    public float CombackPosition = 0.1f;
+    public float ComebackPosition = 0.1f;
     public float AttackDistance = 1.5f;
 
     [Header("넉백 관련")]
-    public float KnockbackForce = 40f;
+    public float KnockbackForce = 6f;
     public float KnockbackDuration = 0.4f;
     public float DeathDuration = 2f;
     private Vector3 _knockbackDirection;
@@ -60,6 +65,11 @@ public class Monster : MonoBehaviour
     private void Start()
     {
         _spawnPosition = transform.position;
+        if (_player != null)
+        {
+            _playerStats = _player.GetComponent<PlayerStats>();
+            _playerTransform = _player.transform;
+        }
     }
 
     private void Update()
@@ -91,7 +101,6 @@ public class Monster : MonoBehaviour
     {
         // 대기하는 상태
         // Todo.Idle 애니메이션 실행
-        if (_player == null) return;
 
         if (Vector3.Distance(transform.position, _player.transform.position) <= DetectDistance)
         {
@@ -131,7 +140,7 @@ public class Monster : MonoBehaviour
         // 제자리로 돌아간다.
         float distance = Vector3.Distance(transform.position, _spawnPosition);
 
-        if (distance < CombackPosition)
+        if (distance < ComebackPosition)
         {
             State = EMonsterState.Idle;
             Debug.Log("상태 전환: Comeback → Idle");
@@ -151,8 +160,6 @@ public class Monster : MonoBehaviour
             State = EMonsterState.Idle;
             return;
         }
-
-        PlayerStats player = _player.GetComponent<PlayerStats>();
  
         float distance = Vector3.Distance(transform.position, _player.transform.position);
         if (distance > AttackDistance)
@@ -164,9 +171,9 @@ public class Monster : MonoBehaviour
         AttackTimer += Time.deltaTime;
         if (AttackTimer >= AttackSpeed)
         {
-            if (player != null)
+            if (_playerStats != null)
             {
-                player.TryTakeDamage(Damage);
+                _playerStats.TryTakeDamage(_damage);
                 Debug.Log("플레이어 공격!");
             }
 
@@ -181,10 +188,10 @@ public class Monster : MonoBehaviour
             return false;
         }
 
-        Health -= Damage;
+        _health -= Damage;
         _knockbackDirection = (transform.position - _player.transform.position).normalized;
 
-        if (Health > 0f)
+        if (_health > 0f)
         {
             State = EMonsterState.Hit;
             Debug.Log("상태 전환: 어떤 상태 -> Hit");
@@ -204,8 +211,13 @@ public class Monster : MonoBehaviour
     {
         // Todo.Hit 애니메이션 실행
 
-        _controller.Move(_knockbackDirection * KnockbackForce * Time.deltaTime);
-        yield return new WaitForSeconds(KnockbackDuration);
+        float timer = 0f;
+        while (timer < KnockbackDuration)
+        {
+            _controller.Move(_knockbackDirection * KnockbackForce * Time.deltaTime);
+            timer += Time.deltaTime;
+            yield return null;
+        }
 
         if (Vector3.Distance(transform.position, _player.transform.position) <= DetectDistance)
         {
