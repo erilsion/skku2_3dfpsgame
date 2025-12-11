@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using UnityEditor.PackageManager;
 using UnityEngine;
 
 public class Monster : MonoBehaviour
@@ -27,22 +26,36 @@ public class Monster : MonoBehaviour
     */
     #endregion
 
+    [Header("기본 상태")]
     public EMonsterState State = EMonsterState.Idle;
+
+    [Header("컴포넌트 옵션")]
     [SerializeField] private GameObject _player;
     [SerializeField] private CharacterController _controller;
+
+    [Header("처음 생성 위치")]
     private Vector3 _spawnPosition;
 
+    [Header("능력치")]
     public float Health = 100f;
     public float Damage = 10f;
 
+    [Header("이동 관련")]
     public float MoveSpeed = 5f;
     public float AttackSpeed = 2f;
     public float AttackTimer = 0f;
 
+    [Header("추격 관련")]
     public float DetectDistance = 4f;
     public float ComebackDistance = 8f;
     public float CombackPosition = 0.1f;
     public float AttackDistance = 1.5f;
+
+    [Header("넉백 관련")]
+    public float KnockbackForce = 40f;
+    public float KnockbackDuration = 0.4f;
+    public float DeathDuration = 2f;
+    private Vector3 _knockbackDirection;
 
     private void Start()
     {
@@ -169,6 +182,7 @@ public class Monster : MonoBehaviour
         }
 
         Health -= Damage;
+        _knockbackDirection = (transform.position - _player.transform.position).normalized;
 
         if (Health > 0f)
         {
@@ -190,7 +204,8 @@ public class Monster : MonoBehaviour
     {
         // Todo.Hit 애니메이션 실행
 
-        yield return new WaitForSeconds(0.2f);
+        _controller.Move(_knockbackDirection * KnockbackForce * Time.deltaTime);
+        yield return new WaitForSeconds(KnockbackDuration);
 
         if (Vector3.Distance(transform.position, _player.transform.position) <= DetectDistance)
         {
@@ -206,7 +221,8 @@ public class Monster : MonoBehaviour
     {
         // Todo.Death 애니메이션 실행
 
-        yield return new WaitForSeconds(2f);
+        _controller.Move(_knockbackDirection * KnockbackForce * Time.deltaTime);
+        yield return new WaitForSeconds(DeathDuration);
         Destroy(gameObject);
     }
 }
