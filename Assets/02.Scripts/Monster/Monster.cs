@@ -1,7 +1,11 @@
-﻿using UnityEngine;
+﻿using Unity.VisualScripting;
+using UnityEngine;
 
 public class Monster : MonoBehaviour
 {
+    // 유한 상태머신 설명
+    #region Comment
+    /*
     // 목표: 처음에는 가만히 있지만 플레이어가 다가가면 쫓아오는 좀비 몬스터를 만들고 싶다.
     //       ㄴ 쫓아오다가 너무 멀어지면 제자리로 돌아간다.
 
@@ -19,13 +23,19 @@ public class Monster : MonoBehaviour
 
     // Finite State Machine(유한 상태머신)
     // 유한개의 상태를 가지고 있고, 상태마다 동작이 다르다.
+    */
+    #endregion
 
     public EMonsterState State = EMonsterState.Idle;
     [SerializeField] private GameObject _player;
     [SerializeField] private CharacterController _controller;
 
     public float MoveSpeed = 5f;
-    public float DetectDistance = 3f;
+    public float AttackSpeed = 2f;
+    public float AttackTimer = 0f;
+
+    public float DetectDistance = 4f;
+    public float AttackDistance = 1.5f;
 
     private void Update()
     {
@@ -60,12 +70,10 @@ public class Monster : MonoBehaviour
 
     // 1. 함수는 한 가지 일만 잘해야 한다.
     // 2. 상태별 행동을 함수로 만든다.
-
     private void Idle()
     {
         // 대기하는 상태
         // Todo.Idle 애니메이션 실행
-
         if (Vector3.Distance(transform.position, _player.transform.position) <= DetectDistance)
         {
             State = EMonsterState.Trace;
@@ -78,10 +86,15 @@ public class Monster : MonoBehaviour
         // 플레이어를 쫓아가는 상태
         // Todo.Run 애니메이션 실행
 
+        float distance = Vector3.Distance(transform.position, _player.transform.position);
         // 1. 방향을 구한다.
         Vector3 direction = (_player.transform.position - transform.position).normalized;
         // 2. 방향을 따라 이동한다.
         _controller.Move(direction * MoveSpeed * Time.deltaTime);
+        if (distance <= AttackDistance)
+        {
+            State = EMonsterState.Attack;
+        }
     }
 
     private void Comeback()
@@ -91,7 +104,21 @@ public class Monster : MonoBehaviour
 
     private void Attack()
     {
-        // 공격한다.
+        // 플레이어를 공격하는 상태
+
+        float distance = Vector3.Distance(transform.position, _player.transform.position);
+        if (distance > AttackDistance)
+        {
+            State = EMonsterState.Trace;
+            return;
+        }
+
+        AttackTimer += Time.deltaTime;
+        if (AttackTimer >= AttackSpeed)
+        {
+            Debug.Log("플레이어 공격!");
+            AttackTimer = 0f;
+        }
     }
 
     private void Hit()
