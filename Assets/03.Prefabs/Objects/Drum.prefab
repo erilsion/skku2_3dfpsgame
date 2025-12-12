@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2896586727242603593}
   - component: {fileID: 6016283172961622055}
   - component: {fileID: -8641749468145693578}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Drum
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -160,4 +160,6 @@ MonoBehaviour:
   _explosionRadius: 10
   _damageLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 896
+  _explosionPower: 1000
+  _explosionTorque: 90

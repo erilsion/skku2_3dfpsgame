@@ -3337,6 +3337,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Drum
       objectReference: {fileID: 0}
+    - target: {fileID: 4590282691597184216, guid: 328213617d4ad794799d3ada2226f6d5, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 6193257467965470495, guid: 328213617d4ad794799d3ada2226f6d5, type: 3}
       propertyPath: m_LocalPosition.x
       value: -4.47
