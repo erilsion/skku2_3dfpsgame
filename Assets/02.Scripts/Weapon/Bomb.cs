@@ -39,6 +39,11 @@ public class Bomb : MonoBehaviour
         GameObject effectObject = Instantiate(ExplosionEffectPrefab);
         effectObject.transform.position = transform.position;
 
+        // FindObjectsOfType을 쓰게 된다면...
+        // 1. 씬을 모두 순회하면서 게임 오브젝트를 찾는다. -> 몬스터가 1000마리면 1000번 순회
+        // 2. 모든 몬스터를 순회하면서 거리를 측정한다. -> 500마리면 500번 순회
+
+        // OverlapSphere: 가상의 구를 만들어서, 그 구 영역 안에 있는 모든 콜라이더를 찾아서 배열로 반환한다.
         Collider[] hits = Physics.OverlapSphere(transform.position, _explosionRadius, _damageLayerMask);
         foreach (var hit in hits)
         {
