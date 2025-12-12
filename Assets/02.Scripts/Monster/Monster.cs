@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
-using static PlayerGunFire;
+using UnityEngine.AI;
 
 public class Monster : MonoBehaviour, IDamageable
 {
@@ -31,13 +31,13 @@ public class Monster : MonoBehaviour, IDamageable
     public EMonsterState State = EMonsterState.Idle;
 
     [Header("컴포넌트 옵션")]
-    [SerializeField] private GameObject _player;
-    [SerializeField] private CharacterController _controller;
+    [SerializeField] private NavMeshAgent _agent;
 
     [Header("처음 생성 위치")]
     private Vector3 _spawnPosition;
 
     [Header("플레이어 옵션")]
+    [SerializeField] private GameObject _player;
     private Transform _playerTransform;
     private PlayerStats _playerStats;
 
@@ -62,8 +62,21 @@ public class Monster : MonoBehaviour, IDamageable
     public float DeathDuration = 2f;
     private Vector3 _knockbackDirection;
 
+    [Header("순찰 관련")]
+    [SerializeField] private Transform[] _patrolPoints;
+    [SerializeField] private float _patrolWaitTime = 3f;
+    private int _currentPatrolIndex = 0;
+    private float _patrolWaitTimer = 0f;
+    private float _patrolArriveDistance = 0.1f;
+    private float _idleToPatrolDelay = 2f;
+    private float _idleTimer = 0f;
+
+
     private void Start()
     {
+        _agent.speed = MoveSpeed;
+        _agent.stoppingDistance = AttackDistance;
+
         _spawnPosition = transform.position;
         if (_player != null)
         {
@@ -92,6 +105,10 @@ public class Monster : MonoBehaviour, IDamageable
             case EMonsterState.Attack:
                 Attack();
                 break;
+
+            case EMonsterState.Patrol:
+                Patrol();
+                break;
         }
     }
 
@@ -107,6 +124,14 @@ public class Monster : MonoBehaviour, IDamageable
             State = EMonsterState.Trace;
             Debug.Log("상태 전환: Idle -> Trace");
         }
+
+        _idleTimer += Time.deltaTime;
+        if (_idleTimer >= _idleToPatrolDelay && _patrolPoints != null && _patrolPoints.Length > 0)
+        {
+            State = EMonsterState.Patrol;
+            Debug.Log("상태 전환: Idle -> Patrol");
+            _idleTimer = 0f;
+        }
     }
 
     private void Trace()
@@ -120,10 +145,7 @@ public class Monster : MonoBehaviour, IDamageable
         }
 
         float distance = Vector3.Distance(transform.position, _player.transform.position);
-        // 1. 방향을 구한다.
-        Vector3 direction = (_player.transform.position - transform.position).normalized;
-        // 2. 방향을 따라 이동한다.
-        _controller.Move(direction * MoveSpeed * Time.deltaTime);
+
         if (distance <= AttackDistance)
         {
             State = EMonsterState.Attack;
@@ -133,6 +155,8 @@ public class Monster : MonoBehaviour, IDamageable
             State = EMonsterState.Comeback;
             Debug.Log("상태 전환: Trace → Comeback");
         }
+
+        _agent.SetDestination(_playerTransform.position);
     }
 
     private void Comeback()
@@ -147,8 +171,7 @@ public class Monster : MonoBehaviour, IDamageable
             return;
         }
 
-        Vector3 direction = (_spawnPosition - transform.position).normalized;
-        _controller.Move(direction * MoveSpeed * Time.deltaTime);
+        _agent.SetDestination(_spawnPosition);
     }
 
     private void Attack()
@@ -160,7 +183,7 @@ public class Monster : MonoBehaviour, IDamageable
             State = EMonsterState.Idle;
             return;
         }
- 
+
         float distance = Vector3.Distance(transform.position, _player.transform.position);
         if (distance > AttackDistance)
         {
@@ -183,7 +206,7 @@ public class Monster : MonoBehaviour, IDamageable
 
     public bool TryTakeDamage(float Damage)
     {
-        if(State == EMonsterState.Hit || State == EMonsterState.Death)
+        if (State == EMonsterState.Hit || State == EMonsterState.Death)
         {
             return false;
         }
@@ -210,14 +233,16 @@ public class Monster : MonoBehaviour, IDamageable
     private IEnumerator Hit_Coroutine()
     {
         // Todo.Hit 애니메이션 실행
+        _agent.isStopped = true;
 
         float timer = 0f;
         while (timer < KnockbackDuration)
         {
-            _controller.Move(_knockbackDirection * KnockbackForce * Time.deltaTime);
+            _agent.Move(_knockbackDirection * KnockbackForce * Time.deltaTime);
             timer += Time.deltaTime;
             yield return null;
         }
+        _agent.isStopped = false;
 
         if (Vector3.Distance(transform.position, _player.transform.position) <= DetectDistance)
         {
@@ -233,8 +258,54 @@ public class Monster : MonoBehaviour, IDamageable
     {
         // Todo.Death 애니메이션 실행
 
-        _controller.Move(_knockbackDirection * KnockbackForce * Time.deltaTime);
-        yield return new WaitForSeconds(DeathDuration);
-        Destroy(gameObject);
+        _agent.isStopped = true;
+
+        float timer = 0f;
+        while (timer < KnockbackDuration)
+        {
+            _agent.Move(_knockbackDirection * KnockbackForce * Time.deltaTime);
+            timer += Time.deltaTime;
+            yield return null;
+        }
+        Destroy(gameObject, DeathDuration);
+    }
+
+    private void Patrol()
+    {
+        if (_player != null)
+        {
+            float playerDistance = Vector3.Distance(transform.position, _player.transform.position);
+            if (playerDistance <= DetectDistance)
+            {
+                State = EMonsterState.Trace;
+                Debug.Log("상태 전환: Patrol -> Trace");
+                return;
+            }
+        }
+
+        if (_patrolPoints == null || _patrolPoints.Length == 0)
+        {
+            State = EMonsterState.Idle;
+            return;
+        }
+
+        Transform targetPoint = _patrolPoints[_currentPatrolIndex];
+        _agent.SetDestination(targetPoint.position);
+        float distance = Vector3.Distance(transform.position, targetPoint.position);
+
+        if (distance <= _patrolArriveDistance)
+        {
+            _patrolWaitTimer += Time.deltaTime;
+            if (_patrolWaitTimer >= _patrolWaitTime)
+            {
+                _currentPatrolIndex++;
+                if (_currentPatrolIndex >= _patrolPoints.Length)
+                {
+                    _currentPatrolIndex = 0;
+                }
+
+                _patrolWaitTimer = 0f;
+            }
+        }
     }
 }
