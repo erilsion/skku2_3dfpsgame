@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using static Bomb;
 using static PlayerGunFire;
 
-public class Monster : MonoBehaviour, IDamageable
+public class Monster : MonoBehaviour, IDamageable, IBombDamageable
 {
     // 유한 상태머신 설명
     #region Comment
@@ -262,14 +263,13 @@ public class Monster : MonoBehaviour, IDamageable
         _agent.isStopped = true;
 
         float timer = 0f;
-        while (timer < DeathDuration)
+        while (timer < KnockbackDuration)
         {
             transform.position += _knockbackDirection * KnockbackForce * Time.deltaTime;
             timer += Time.deltaTime;
             yield return null;
         }
-
-        Destroy(gameObject);
+        Destroy(gameObject, DeathDuration);
     }
 
     private void Patrol()
