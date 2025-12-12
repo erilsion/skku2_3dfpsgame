@@ -1,10 +1,8 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
-using static Bomb;
-using static PlayerGunFire;
 
-public class Monster : MonoBehaviour, IDamageable, IBombDamageable
+public class Monster : MonoBehaviour, IDamageable
 {
     // 유한 상태머신 설명
     #region Comment
@@ -240,7 +238,7 @@ public class Monster : MonoBehaviour, IDamageable, IBombDamageable
         float timer = 0f;
         while (timer < KnockbackDuration)
         {
-            transform.position += _knockbackDirection * KnockbackForce * Time.deltaTime;
+            _agent.Move(_knockbackDirection * KnockbackForce * Time.deltaTime);
             timer += Time.deltaTime;
             yield return null;
         }
@@ -265,7 +263,7 @@ public class Monster : MonoBehaviour, IDamageable, IBombDamageable
         float timer = 0f;
         while (timer < KnockbackDuration)
         {
-            transform.position += _knockbackDirection * KnockbackForce * Time.deltaTime;
+            _agent.Move(_knockbackDirection * KnockbackForce * Time.deltaTime);
             timer += Time.deltaTime;
             yield return null;
         }
@@ -292,7 +290,7 @@ public class Monster : MonoBehaviour, IDamageable, IBombDamageable
         }
 
         Transform targetPoint = _patrolPoints[_currentPatrolIndex];
-        _agent.SetDestination(targetPoint.position); ;
+        _agent.SetDestination(targetPoint.position);
         float distance = Vector3.Distance(transform.position, targetPoint.position);
 
         if (distance <= _patrolArriveDistance)

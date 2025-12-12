@@ -1,6 +1,4 @@
-﻿using UnityEditor.PackageManager;
-using UnityEngine;
-using static PlayerGunFire;
+﻿using UnityEngine;
 
 public class Bomb : MonoBehaviour
 {
@@ -44,7 +42,7 @@ public class Bomb : MonoBehaviour
         Collider[] hits = Physics.OverlapSphere(transform.position, _explosionRadius, _damageLayerMask);
         foreach (var hit in hits)
         {
-            if (hit.TryGetComponent<IBombDamageable>(out var damageable))
+            if (hit.TryGetComponent<IDamageable>(out var damageable))
             {
                 damageable.TryTakeDamage(_damage);
             }
@@ -54,10 +52,5 @@ public class Bomb : MonoBehaviour
 
         BombManager.Instance.RemoveBomb();
         BombPool.Instance.ReturnToPool(gameObject);
-    }
-
-    public interface IBombDamageable
-    {
-        bool TryTakeDamage(float damage);
     }
 }

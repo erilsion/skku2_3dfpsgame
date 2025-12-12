@@ -124,9 +124,4 @@ public class PlayerGunFire : MonoBehaviour
 
         Debug.Log($"재장전 완료! 탄창: {_currentBullet} | 예비탄: {_reserveBullet}");
     }
-
-    public interface IDamageable
-    {
-        bool TryTakeDamage(float damage);
-    }
 }
