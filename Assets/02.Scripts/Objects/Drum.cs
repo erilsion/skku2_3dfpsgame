@@ -4,7 +4,6 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class Drum : MonoBehaviour, IDamageable
 {
-    [Header("리지드바디")]
     private Rigidbody _rigidbody;
 
     [Header("체력")]
@@ -14,31 +13,34 @@ public class Drum : MonoBehaviour, IDamageable
     [SerializeField] private int _damage = 100;
 
     [Header("폭발 프리팹")]
-    public GameObject ExplosionEffectPrefab;
+    [SerializeField] private GameObject _explosionEffectPrefab;
 
     [Header("폭발 옵션")]
     private bool _hasExploded = false;
     [SerializeField] private float _explosionRadius = 10f;
     [SerializeField] private LayerMask _damageLayerMask;
-    private float _destroyTime = 5f;
+    [SerializeField] private float _destroyTime = 5f;
     public event Action<Drum> OnExploded;
 
     [Header("날아가는 힘")]
     [SerializeField] private float _explosionPower = 1000f;
     [SerializeField] private float _explosionTorque = 90f;
 
+    private void Awake()
+    {
+        _rigidbody = GetComponent<Rigidbody>();
+    }
 
     private void Start()
     {
         _health.Initialize();
-        _rigidbody = GetComponent<Rigidbody>();
     }
 
-    public bool TryTakeDamage(float Damage)
+    public bool TryTakeDamage(float damage)
     {
         if (_hasExploded) return false;
 
-        bool depletedNow = _health.ApplyDamage(Damage);
+        bool depletedNow = _health.ApplyDamage(damage);
 
         if (depletedNow)
         {
@@ -55,7 +57,7 @@ public class Drum : MonoBehaviour, IDamageable
 
         OnExploded?.Invoke(this);
 
-        GameObject effectObject = Instantiate(ExplosionEffectPrefab);
+        GameObject effectObject = Instantiate(_explosionEffectPrefab);
         effectObject.transform.position = transform.position;
 
         _rigidbody.AddForce(Vector3.up * _explosionPower);

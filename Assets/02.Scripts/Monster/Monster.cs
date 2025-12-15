@@ -206,14 +206,14 @@ public class Monster : MonoBehaviour, IDamageable
         }
     }
 
-    public bool TryTakeDamage(float Damage)
+    public bool TryTakeDamage(float damage)
     {
         if (State == EMonsterState.Hit || State == EMonsterState.Death)
         {
             return false;
         }
 
-        Health.Decrease(Damage);
+        Health.Decrease(damage);
         _knockbackDirection = (transform.position - _player.transform.position).normalized;
 
         if (Health.Value > 0f)

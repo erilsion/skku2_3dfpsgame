@@ -37,9 +37,9 @@ public class PlayerStats : MonoBehaviour
         Stamina.Regenerate(deltaTime);
     }
 
-    public bool TryTakeDamage(float Damage)
+    public bool TryTakeDamage(float damage)
     {
-        bool depletedNow = Health.ApplyDamage(Damage);
+        bool depletedNow = Health.ApplyDamage(damage);
 
         if (depletedNow)
         {
