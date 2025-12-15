@@ -42,7 +42,7 @@ public class Monster : MonoBehaviour, IDamageable
     private PlayerStats _playerStats;
 
     [Header("능력치")]
-    [SerializeField] private float _health = 100f;
+    public ConsumableStat Health;
     [SerializeField] private float _damage = 10f;
 
     [Header("이동 관련")]
@@ -211,10 +211,10 @@ public class Monster : MonoBehaviour, IDamageable
             return false;
         }
 
-        _health -= Damage;
+        Health.Decrease(Damage);
         _knockbackDirection = (transform.position - _player.transform.position).normalized;
 
-        if (_health > 0f)
+        if (Health.Value > 0f)
         {
             State = EMonsterState.Hit;
             Debug.Log("상태 전환: 어떤 상태 -> Hit");
