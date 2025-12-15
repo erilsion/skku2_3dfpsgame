@@ -37,6 +37,7 @@ public class PlayerGunFire : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.Instance.State != EGameState.Playing) return;
         _fireTimer += Time.deltaTime;
 
         if (_isReloading)

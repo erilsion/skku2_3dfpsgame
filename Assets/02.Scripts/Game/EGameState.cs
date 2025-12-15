@@ -4,6 +4,6 @@ public enum EGameState
 {
     Ready,
     Playing,
-    Gameover
+    GameOver
 }
 

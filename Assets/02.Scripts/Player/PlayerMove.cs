@@ -33,6 +33,8 @@ public class PlayerMove : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.Instance.State != EGameState.Playing) return;
+
         if (_controller.isGrounded)
         {
             _canDoubleJump = false;

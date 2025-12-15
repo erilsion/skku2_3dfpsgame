@@ -14,6 +14,8 @@ public class CameraFollow : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.Instance.State != EGameState.Playing) return;
+
         if (Input.GetKeyDown(KeyCode.T))
         {
             _isFPS = !_isFPS;

@@ -20,9 +20,11 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         _stateTextUI.gameObject.SetActive(true);
+
         _state = EGameState.Ready;
         _stateTextUI.text = "준비중...";
-        StartToPlay_Coroutine();
+
+        StartCoroutine(StartToPlay_Coroutine());
     }
 
     private IEnumerator StartToPlay_Coroutine()
