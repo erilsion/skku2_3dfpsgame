@@ -87,6 +87,8 @@ public class Monster : MonoBehaviour, IDamageable
 
     private void Update()
     {
+        if (GameManager.Instance.State != EGameState.Playing) return;
+
         // 몬스터의 상태에 따라 다른 행동을 한다. (다른 메서드를 호출한다.)
         switch (State)
         {
