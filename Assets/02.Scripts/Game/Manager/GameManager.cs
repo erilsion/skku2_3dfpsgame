@@ -39,4 +39,13 @@ public class GameManager : MonoBehaviour
 
         _stateTextUI.gameObject.SetActive(false);
     }
+
+    public void GameOver()
+    {
+        if (_state == EGameState.GameOver) return;  // 중복 방지
+
+        _stateTextUI.gameObject.SetActive(true);
+        _stateTextUI.text = "게임 오버!";
+        _state = EGameState.GameOver;
+    }
 }

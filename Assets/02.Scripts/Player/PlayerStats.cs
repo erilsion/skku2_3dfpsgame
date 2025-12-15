@@ -44,6 +44,7 @@ public class PlayerStats : MonoBehaviour
         if (Health.Value <= 0)
         {
             Health.SetValue(0);
+            GameManager.Instance.GameOver();
             Destroy(gameObject);
         }
 
