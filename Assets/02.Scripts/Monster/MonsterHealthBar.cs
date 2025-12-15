@@ -17,7 +17,7 @@ public class MonsterHealthBar : MonoBehaviour
         _monster = gameObject.GetComponent<Monster>();
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         // UI가 알고 있는 몬스터 체력값과 다를 경우에만 fillAmount를 수정한다.
         if (_lastHealth != _monster.Health.Value)
