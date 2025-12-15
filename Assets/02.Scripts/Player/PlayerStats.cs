@@ -39,11 +39,10 @@ public class PlayerStats : MonoBehaviour
 
     public bool TryTakeDamage(float Damage)
     {
-        Health.Decrease(Damage);
+        bool depletedNow = Health.ApplyDamage(Damage);
 
-        if (Health.Value <= 0)
+        if (depletedNow)
         {
-            Health.SetValue(0);
             GameManager.Instance.GameOver();
             Destroy(gameObject);
         }

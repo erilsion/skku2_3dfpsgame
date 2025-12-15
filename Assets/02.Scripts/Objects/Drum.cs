@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 public class Drum : MonoBehaviour, IDamageable
@@ -20,6 +21,7 @@ public class Drum : MonoBehaviour, IDamageable
     [SerializeField] private float _explosionRadius = 10f;
     [SerializeField] private LayerMask _damageLayerMask;
     private float _destroyTime = 5f;
+    public event Action<Drum> OnExploded;
 
     [Header("날아가는 힘")]
     [SerializeField] private float _explosionPower = 1000f;
@@ -34,15 +36,15 @@ public class Drum : MonoBehaviour, IDamageable
 
     public bool TryTakeDamage(float Damage)
     {
-        if (_health.Value <= 0) return false;
         if (_hasExploded) return false;
 
-        _health.Decrease(Damage);
+        bool depletedNow = _health.ApplyDamage(Damage);
 
-        if (_health.Value <= 0)
+        if (depletedNow)
         {
             Explode();
         }
+
         return true;
     }
 
@@ -51,11 +53,13 @@ public class Drum : MonoBehaviour, IDamageable
         if (_hasExploded) return;
         _hasExploded = true;
 
+        OnExploded?.Invoke(this);
+
         GameObject effectObject = Instantiate(ExplosionEffectPrefab);
         effectObject.transform.position = transform.position;
 
         _rigidbody.AddForce(Vector3.up * _explosionPower);
-        _rigidbody.AddTorque(Random.insideUnitSphere * _explosionTorque);
+        _rigidbody.AddTorque(UnityEngine.Random.insideUnitSphere * _explosionTorque);
 
         Collider[] hits = Physics.OverlapSphere(transform.position, _explosionRadius, _damageLayerMask);
         foreach (var hit in hits)
@@ -65,9 +69,6 @@ public class Drum : MonoBehaviour, IDamageable
                 damageable.TryTakeDamage(_damage);
             }
         }
-
-        CameraRecoil.Instance.DoRecoil();
-
         Destroy(gameObject, _destroyTime);
     }
 }
