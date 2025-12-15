@@ -20,12 +20,27 @@ public class UI_PlayerStats : MonoBehaviour
     [SerializeField] private float _backLerpSpeed = 1.6f;
     [SerializeField] private float _colorDelay = 0.14f;
 
+    [Header("히트 스크린")]
+    [SerializeField] private Image _hitScreenImage;
+    private float _hitScreenTime = 0.2f;
+
     private Coroutine _backRoutine;
+    private Coroutine _hitScreenRoutine;
+    private float _lastHealth01;
+
+
+    private void Awake()
+    {
+        _hitScreenImage.gameObject.SetActive(false);
+    }
 
     private void Start()
     {
         _healthFrontSliderFill.color = Color.red;
+
         float h01 = GetHealth01();
+        _lastHealth01 = h01;
+
         if (_healthFrontSlider != null) _healthFrontSlider.value = h01;
         if (_healthBackSlider != null) _healthBackSlider.value = h01;
     }
@@ -34,13 +49,19 @@ public class UI_PlayerStats : MonoBehaviour
     {
         if (GameManager.Instance.State == EGameState.GameOver || _stats == null)
         {
+            StopHitScreen();
             StopBackRoutine();
             SetHealth(0f);
-            if (_staminaSlider != null) _staminaSlider.value = 0f;
             return;
         }
 
         float target = GetHealth01();
+
+        if (target < _lastHealth01)
+        {
+            TryPlayHitScreen();
+        }
+        _lastHealth01 = target;
 
         if (_healthFrontSlider != null) _healthFrontSlider.value = target;
 
@@ -55,8 +76,9 @@ public class UI_PlayerStats : MonoBehaviour
         {
             if (_backRoutine == null)
             {
-                _backRoutine = StartCoroutine(BackBarFollowRoutine());
-            }   
+                _backRoutine = StartCoroutine(BackBarFollow_Coroutine());
+            }
+            StopCoroutine(HitScreen_Coroutine());
         }
 
         if (_staminaSlider != null)
@@ -65,7 +87,31 @@ public class UI_PlayerStats : MonoBehaviour
         }
     }
 
-    private IEnumerator BackBarFollowRoutine()
+    private void TryPlayHitScreen()
+    {
+        if (_hitScreenRoutine != null) return;
+        _hitScreenRoutine = StartCoroutine(HitScreen_Coroutine());
+    }
+
+    private void StopHitScreen()
+    {
+        if (_hitScreenRoutine != null)
+        {
+            StopCoroutine(_hitScreenRoutine);
+            _hitScreenRoutine = null;
+        }
+    }
+
+    private IEnumerator HitScreen_Coroutine()
+    {
+        _hitScreenImage.gameObject.SetActive(true);
+        yield return new WaitForSeconds(_hitScreenTime);
+        _hitScreenImage.gameObject.SetActive(false);
+
+        _hitScreenRoutine = null;
+    }
+
+    private IEnumerator BackBarFollow_Coroutine()
     {
         _healthFrontSliderFill.color = Color.white;
 
