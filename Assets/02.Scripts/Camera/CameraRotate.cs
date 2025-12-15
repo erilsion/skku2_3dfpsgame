@@ -12,7 +12,9 @@ public class CameraRotate : MonoBehaviour
 
     private void Update()
     {
-        if(!Input.GetMouseButton(1)) return; // 오른쪽 마우스 버튼 클릭 시에만 카메라 회전
+        if (GameManager.Instance.State != EGameState.Playing) return;
+
+        if (!Input.GetMouseButton(1)) return; // 오른쪽 마우스 버튼 클릭 시에만 카메라 회전
 
         // 1. 마우스 입력 받기
         float mouseX = Input.GetAxis("Mouse X");

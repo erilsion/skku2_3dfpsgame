@@ -11,6 +11,16 @@ public class ConsumableStat
     public float MaxValue => _maxValue;
     public float Value => _value;
 
+    public bool IsDepleted() => _value <= 0f;
+
+    public bool ApplyDamage(float amount)
+    {
+        if (IsDepleted()) return true;
+
+        Decrease(amount);
+        return IsDepleted();
+    }
+
 
     public void Initialize()
     {

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class PlayerGunFire : MonoBehaviour
 {
@@ -37,6 +38,10 @@ public class PlayerGunFire : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.Instance.State != EGameState.Playing) return;
+
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
+        
         _fireTimer += Time.deltaTime;
 
         if (_isReloading)

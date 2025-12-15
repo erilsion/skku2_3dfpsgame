@@ -37,13 +37,13 @@ public class PlayerStats : MonoBehaviour
         Stamina.Regenerate(deltaTime);
     }
 
-    public bool TryTakeDamage(float Damage)
+    public bool TryTakeDamage(float damage)
     {
-        Health.Decrease(Damage);
+        bool depletedNow = Health.ApplyDamage(damage);
 
-        if (Health.Value <= 0)
+        if (depletedNow)
         {
-            Health.SetValue(0);
+            GameManager.Instance.GameOver();
             Destroy(gameObject);
         }
 

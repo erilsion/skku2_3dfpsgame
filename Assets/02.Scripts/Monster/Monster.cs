@@ -42,7 +42,7 @@ public class Monster : MonoBehaviour, IDamageable
     private PlayerStats _playerStats;
 
     [Header("능력치")]
-    [SerializeField] private float _health = 100f;
+    public ConsumableStat Health;
     [SerializeField] private float _damage = 10f;
 
     [Header("이동 관련")]
@@ -87,6 +87,8 @@ public class Monster : MonoBehaviour, IDamageable
 
     private void Update()
     {
+        if (GameManager.Instance.State != EGameState.Playing) return;
+
         // 몬스터의 상태에 따라 다른 행동을 한다. (다른 메서드를 호출한다.)
         switch (State)
         {
@@ -204,17 +206,17 @@ public class Monster : MonoBehaviour, IDamageable
         }
     }
 
-    public bool TryTakeDamage(float Damage)
+    public bool TryTakeDamage(float damage)
     {
         if (State == EMonsterState.Hit || State == EMonsterState.Death)
         {
             return false;
         }
 
-        _health -= Damage;
+        Health.Decrease(damage);
         _knockbackDirection = (transform.position - _player.transform.position).normalized;
 
-        if (_health > 0f)
+        if (Health.Value > 0f)
         {
             State = EMonsterState.Hit;
             Debug.Log("상태 전환: 어떤 상태 -> Hit");
