@@ -57,8 +57,7 @@ public class Drum : MonoBehaviour, IDamageable
 
         OnExploded?.Invoke(this);
 
-        GameObject effectObject = Instantiate(_explosionEffectPrefab);
-        effectObject.transform.position = transform.position;
+        Instantiate(_explosionEffectPrefab, transform.position, Quaternion.identity);
 
         _rigidbody.AddForce(Vector3.up * _explosionPower);
         _rigidbody.AddTorque(UnityEngine.Random.insideUnitSphere * _explosionTorque);
