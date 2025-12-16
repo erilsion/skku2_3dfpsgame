@@ -3,7 +3,7 @@ using DG.Tweening;
 
 // 목표를 따라다니는 카메라
 
-public class CameraFollow : MonoBehaviour
+public class CameraFollow : PlayStateListener
 {
     public Transform Target;
     public Vector3 TpsOffset = new Vector3(0, 2, -6);
@@ -12,9 +12,10 @@ public class CameraFollow : MonoBehaviour
     private bool _isFPS = false;
     private bool _isTweening = false;
 
+
     private void Update()
     {
-        if (GameManager.Instance.State != EGameState.Playing) return;
+        if (!IsPlaying) return;
 
         if (Input.GetKeyDown(KeyCode.T))
         {

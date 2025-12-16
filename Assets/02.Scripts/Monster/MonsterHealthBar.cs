@@ -12,6 +12,10 @@ public class MonsterHealthBar : MonoBehaviour
     [SerializeField] private Image _gaugeImage;
     private float _lastHealth = -1f;
 
+    [Header("카메라")]
+    [SerializeField] private Camera _mainCamera;
+
+
     private void Awake()
     {
         _monster = gameObject.GetComponent<Monster>();
@@ -26,6 +30,6 @@ public class MonsterHealthBar : MonoBehaviour
         }
 
         // 빌보드 기법: 카메라의 위치와 회전에 상관없이 항상 정면을 바라보게 하는 기법
-        _healthBarTransform.forward = Camera.main.transform.forward;
+        _healthBarTransform.forward = _mainCamera.transform.forward;
     }
 }

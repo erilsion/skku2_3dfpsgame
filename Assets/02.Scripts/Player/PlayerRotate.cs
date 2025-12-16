@@ -1,13 +1,14 @@
 ﻿using UnityEngine;
 
-public class PlayerRotate : MonoBehaviour
+public class PlayerRotate : PlayStateListener
 {
     public float RotationSpeed = 200f;  // 초당 200도 회전
     private float _accumulationX = 0f;
 
+
     private void Update()
     {
-        if (GameManager.Instance.State != EGameState.Playing) return;
+        if (!IsPlaying) return;
 
         if (!Input.GetMouseButton(1)) return;
 

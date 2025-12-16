@@ -1294,11 +1294,6 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
---- !u!224 &496366841 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 3226783895790840795, guid: ad4d05e3ccb401a4aa71e56d16f35879, type: 3}
-  m_PrefabInstance: {fileID: 693759940}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &505931710
 GameObject:
   m_ObjectHideFlags: 0
@@ -1816,6 +1811,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8742498130594302526, guid: ad4d05e3ccb401a4aa71e56d16f35879, type: 3}
+      propertyPath: _mainCamera
+      value: 
+      objectReference: {fileID: 330585545}
     - target: {fileID: 8853672944335115423, guid: ad4d05e3ccb401a4aa71e56d16f35879, type: 3}
       propertyPath: m_Name
       value: Zombie (1)
@@ -1823,10 +1822,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8853672944335115423, guid: ad4d05e3ccb401a4aa71e56d16f35879, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1779777568}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ad4d05e3ccb401a4aa71e56d16f35879, type: 3}
 --- !u!1 &705159429
 GameObject:
@@ -3632,25 +3628,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1764239573}
   m_CullTransparentMesh: 1
---- !u!1 &1779777567 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8853672944335115423, guid: ad4d05e3ccb401a4aa71e56d16f35879, type: 3}
-  m_PrefabInstance: {fileID: 693759940}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1779777568
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1779777567}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc405be1183048f4599ba4005ea79e5f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _healthBarTransform: {fileID: 496366841}
-  _gaugeImage: {fileID: 1947977354}
 --- !u!1 &1893919572
 GameObject:
   m_ObjectHideFlags: 0
@@ -4083,17 +4060,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1947183289}
   m_CullTransparentMesh: 1
---- !u!114 &1947977354 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6373903386859678510, guid: ad4d05e3ccb401a4aa71e56d16f35879, type: 3}
-  m_PrefabInstance: {fileID: 693759940}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1949276122
 GameObject:
   m_ObjectHideFlags: 0
@@ -4769,6 +4735,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8742498130594302526, guid: ad4d05e3ccb401a4aa71e56d16f35879, type: 3}
+      propertyPath: _mainCamera
+      value: 
+      objectReference: {fileID: 330585545}
     - target: {fileID: 8853672944335115423, guid: ad4d05e3ccb401a4aa71e56d16f35879, type: 3}
       propertyPath: m_Name
       value: Zombie

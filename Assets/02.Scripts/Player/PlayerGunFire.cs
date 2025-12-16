@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class PlayerGunFire : MonoBehaviour
+public class PlayerGunFire : PlayStateListener
 {
     // 목표: 마우스 왼쪽 버튼을 누르면 카메라(플레이어)가 바라보는 방향으로 총알을 발사하고 싶다. (총알을 날리고 싶다.)
 
@@ -31,14 +31,15 @@ public class PlayerGunFire : MonoBehaviour
     [Header("데미지")]
     [SerializeField] private int _damage = 10;
 
-    private void Start()
+
+    private void Awake()
     {
         _currentBullet = _maxBullet;
     }
 
     private void Update()
     {
-        if (GameManager.Instance.State != EGameState.Playing) return;
+        if (!IsPlaying) return;
 
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
         

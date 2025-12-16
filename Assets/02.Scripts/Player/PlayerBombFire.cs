@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class PlayerBombFire : MonoBehaviour
+public class PlayerBombFire : PlayStateListener
 {
     // 마우스 오른쪽 버튼을 누르면 카메라(플레이어)가 바라보는 방향으로 폭탄을 던지고 싶다.
 
@@ -10,9 +10,10 @@ public class PlayerBombFire : MonoBehaviour
     [Header("던질 힘")]
     [SerializeField] private float _throwPower = 15f;
 
+
     private void Update()
     {
-        if (GameManager.Instance.State != EGameState.Playing) return;
+        if (!IsPlaying) return;
 
         if (Input.GetMouseButtonDown(1))
         {

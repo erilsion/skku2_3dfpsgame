@@ -10,7 +10,11 @@ public class GameManager : MonoBehaviour
     private EGameState _state = EGameState.Ready;
     public EGameState State => _state;
 
+    [Header("텍스트 UI")]
     [SerializeField] private TextMeshProUGUI _stateTextUI;
+
+    public event System.Action<EGameState> OnStateChanged;
+
 
     private void Awake()
     {
@@ -21,7 +25,7 @@ public class GameManager : MonoBehaviour
     {
         _stateTextUI.gameObject.SetActive(true);
 
-        _state = EGameState.Ready;
+        ChangeState(EGameState.Ready, forceNotify: true);
         _stateTextUI.text = "준비중...";
 
         StartCoroutine(StartToPlay_Coroutine());
@@ -35,7 +39,7 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
 
-        _state = EGameState.Playing;
+        ChangeState(EGameState.Playing);
 
         _stateTextUI.gameObject.SetActive(false);
     }
@@ -46,6 +50,13 @@ public class GameManager : MonoBehaviour
 
         _stateTextUI.gameObject.SetActive(true);
         _stateTextUI.text = "게임 오버!";
-        _state = EGameState.GameOver;
+        ChangeState(EGameState.GameOver);
+    }
+
+    private void ChangeState(EGameState newState, bool forceNotify = false)
+    {
+        if (!forceNotify && _state == newState) return;
+        _state = newState;
+        OnStateChanged?.Invoke(_state);
     }
 }

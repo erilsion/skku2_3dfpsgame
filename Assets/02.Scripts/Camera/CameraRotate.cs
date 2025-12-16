@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 // 마우스를 조작하면 카메라를 그 방향으로 회전시키는 스크립트
-public class CameraRotate : MonoBehaviour
+public class CameraRotate : PlayStateListener
 {
     public float RotationSpeed = 200f;  // 초당 200도 회전
 
@@ -10,9 +10,10 @@ public class CameraRotate : MonoBehaviour
     private float _accumulationX = 0f;
     private float _accumulationY = 0f;
 
+
     private void Update()
     {
-        if (GameManager.Instance.State != EGameState.Playing) return;
+        if (!IsPlaying) return;
 
         if (!Input.GetMouseButton(1)) return; // 오른쪽 마우스 버튼 클릭 시에만 카메라 회전
 
