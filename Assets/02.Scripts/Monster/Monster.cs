@@ -67,6 +67,9 @@ public class Monster : PlayStateListener, IDamageable
     private float _idleToPatrolDelay = 2f;
     private float _idleTimer = 0f;
 
+    private Vector3 _jumpStartPosition;
+    private Vector3 _jumpEndPosition;
+
 
     private void Awake()
     {
@@ -107,6 +110,10 @@ public class Monster : PlayStateListener, IDamageable
 
             case EMonsterState.Patrol:
                 Patrol();
+                break;
+
+            case EMonsterState.Jump:
+                Jump();
                 break;
         }
     }
@@ -156,6 +163,34 @@ public class Monster : PlayStateListener, IDamageable
             State = EMonsterState.Comeback;
             Debug.Log("상태 전환: Trace → Comeback");
         }
+
+        if (_agent.isOnOffMeshLink)
+        {
+            OffMeshLinkData linkData = _agent.currentOffMeshLinkData;
+            _jumpStartPosition = linkData.startPos;
+            _jumpEndPosition = linkData.endPos;
+
+            if (_jumpEndPosition.y > _jumpStartPosition.y)
+            {
+                Debug.Log("상태 전환: Trace → Jump");
+                State = EMonsterState.Jump;
+                return;
+            }
+        }
+    }
+
+    private void Jump()
+    {
+        // 1. 점프 거리와 내 이동속도를 계산해서 점프 시간을 구한다.
+        // 2. 점프 시간동안 포물선으로 이동한다.
+        // 3. 이동 후 다시 Trace로 돌아간다.
+        _agent.isStopped = true;
+        _agent.ResetPath();
+        _agent.CompleteOffMeshLink();
+
+        transform.position = _jumpEndPosition;
+        Debug.Log("상태 전환: Jump → Trace");
+        State = EMonsterState.Trace;
     }
 
     private void Comeback()
@@ -171,6 +206,12 @@ public class Monster : PlayStateListener, IDamageable
         }
 
         _agent.SetDestination(_spawnPosition);
+
+        if (Vector3.Distance(transform.position, _player.transform.position) <= DetectDistance)
+        {
+            State = EMonsterState.Trace;
+            Debug.Log("상태 전환: Comeback -> Trace");
+        }
     }
 
     private void Attack()

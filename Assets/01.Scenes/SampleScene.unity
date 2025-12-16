@@ -919,8 +919,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 888e5368348a7554a96e114c21bf71c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  State: 0
   Target: {fileID: 1186628032}
-  TpsOffset: {x: 0, y: 2, z: -6}
+  _pitch: 0
+  _tpsOffset: {x: 0, y: 1, z: -6}
+  _topOffset: {x: 0, y: 2, z: -8}
+  _topPitch: 50
+  _switchDuration: 0.4
 --- !u!1 &336318725
 GameObject:
   m_ObjectHideFlags: 0
@@ -2706,6 +2711,7 @@ GameObject:
   - component: {fileID: 1246447627}
   - component: {fileID: 1246447626}
   - component: {fileID: 1246447625}
+  - component: {fileID: 1246447629}
   m_Layer: 0
   m_Name: Jumpground
   m_TagString: Untagged
@@ -2802,6 +2808,31 @@ Transform:
   m_Children: []
   m_Father: {fileID: 288925947}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1246447629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1246447623}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eeb5dc026fdf4b488bc7ae0138ab719, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SerializedVersion: 1
+  m_AgentTypeID: -334000983
+  m_StartPoint: {x: 0, y: 0, z: -2.5}
+  m_EndPoint: {x: 0, y: 0, z: 2.5}
+  m_StartTransform: {fileID: 0}
+  m_EndTransform: {fileID: 0}
+  m_Activated: 1
+  m_Width: 3
+  m_CostModifier: 1
+  m_IsOverridingCost: 0
+  m_Bidirectional: 1
+  m_AutoUpdatePosition: 0
+  m_Area: 0
 --- !u!1 &1274674535
 GameObject:
   m_ObjectHideFlags: 0
@@ -3440,7 +3471,7 @@ MonoBehaviour:
   m_OverrideGenerateLinks: 0
   m_GenerateLinks: 0
   m_IgnoreFromBuild: 0
-  m_ApplyToChildren: 1
+  m_ApplyToChildren: 0
   m_AffectedAgents: ffffffff
 --- !u!1 &1522199944
 GameObject:
@@ -5164,7 +5195,7 @@ MonoBehaviour:
   m_OverrideGenerateLinks: 0
   m_GenerateLinks: 0
   m_IgnoreFromBuild: 0
-  m_ApplyToChildren: 1
+  m_ApplyToChildren: 0
   m_AffectedAgents: ffffffff
 --- !u!4 &2077228757 stripped
 Transform:
