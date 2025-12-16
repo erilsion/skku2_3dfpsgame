@@ -60,7 +60,7 @@ public class UI_PlayerStats : MonoBehaviour
 
     private void UpdateHealthUI(float currentValue, float maxValue)
     {
-        if (GameManager.Instance.State == EGameState.GameOver || _stats == null)
+        if (_stats == null)
         {
             StopHitScreen();
             StopBackRoutine();

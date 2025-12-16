@@ -33,30 +33,26 @@ public class Monster : PlayStateListener, IDamageable
     [Header("컴포넌트 옵션")]
     [SerializeField] private NavMeshAgent _agent;
 
-    [Header("처음 생성 위치")]
     private Vector3 _spawnPosition;
 
-    [Header("플레이어 옵션")]
+    [Header("플레이어 관련 옵션")]
     [SerializeField] private GameObject _player;
     private Transform _playerTransform;
     private PlayerStats _playerStats;
 
     [Header("능력치")]
-    public ConsumableStat Health;
     [SerializeField] private float _damage = 10f;
+    public ConsumableStat Health;
 
-    [Header("이동 관련")]
     public float MoveSpeed = 5f;
     public float AttackSpeed = 2f;
     public float AttackTimer = 0f;
 
-    [Header("추격 관련")]
     public float DetectDistance = 4f;
     public float ComebackDistance = 8f;
     public float ComebackPosition = 0.1f;
     public float AttackDistance = 1.5f;
 
-    [Header("넉백 관련")]
     public float KnockbackForce = 6f;
     public float KnockbackDuration = 0.4f;
     public float DeathDuration = 2f;
@@ -148,6 +144,8 @@ public class Monster : PlayStateListener, IDamageable
         }
 
         float distance = Vector3.Distance(transform.position, _player.transform.position);
+        _agent.SetDestination(_playerTransform.position);
+        // _agent.destination = _playerTransform.position;  위와 같은 기능을 하지만 함수로 쓰자
 
         if (distance <= AttackDistance)
         {
@@ -158,8 +156,6 @@ public class Monster : PlayStateListener, IDamageable
             State = EMonsterState.Comeback;
             Debug.Log("상태 전환: Trace → Comeback");
         }
-
-        _agent.SetDestination(_playerTransform.position);
     }
 
     private void Comeback()
