@@ -13,10 +13,10 @@ public class CameraFollow : PlayStateListener
     [SerializeField] private float _pitch = 0f;
 
     [Header("TPS")]
-    [SerializeField] private Vector3 _tpsOffset = new Vector3(0, 1, -6);
+    [SerializeField] private Vector3 _tpsOffset = new Vector3(0, 1, -8);
 
     [Header("탑뷰")]
-    [SerializeField] private Vector3 _topOffset = new Vector3(0, 2, -8);
+    [SerializeField] private Vector3 _topOffset = new Vector3(0, 2, -10);
     [SerializeField] private float _topPitch = 50f;
 
     [Header("전환 옵션")]

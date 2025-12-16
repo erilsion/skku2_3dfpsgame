@@ -57,7 +57,7 @@ public class PlayerMove : PlayStateListener
         // 0. 중력을 누적한다.
         _yVelocity += _config.Gravity * Time.deltaTime;
 
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(2))
         {
             if (TrySetAutoMove()) _isAutoMoving = true;
         }
@@ -125,13 +125,6 @@ public class PlayerMove : PlayStateListener
         move.y = _yVelocity;
 
         _controller.Move(move * Time.deltaTime);
-
-        // 자동이동 시 진행 방향으로 회전(선택)
-        if (desired.sqrMagnitude > 0.001f)
-        {
-            Quaternion targetRot = Quaternion.LookRotation(desired);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * _config.AutoTurnSpeed);
-        }
     }
 
     private float GetMoveSpeed()

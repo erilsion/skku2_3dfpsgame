@@ -955,8 +955,8 @@ MonoBehaviour:
   State: 0
   Target: {fileID: 1186628032}
   _pitch: 0
-  _tpsOffset: {x: 0, y: 1, z: -6}
-  _topOffset: {x: 0, y: 2, z: -8}
+  _tpsOffset: {x: 0, y: 1, z: -8}
+  _topOffset: {x: 0, y: 2, z: -10}
   _topPitch: 50
   _switchDuration: 0.4
 --- !u!1 &336318725
@@ -1213,7 +1213,7 @@ MonoBehaviour:
   RunSpeed:
     _value: 20
   JumpPower:
-    _value: 5
+    _value: 8
 --- !u!114 &397518665
 MonoBehaviour:
   m_ObjectHideFlags: 0

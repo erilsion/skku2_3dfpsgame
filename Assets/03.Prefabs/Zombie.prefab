@@ -455,8 +455,8 @@ MonoBehaviour:
   MoveSpeed: 5
   AttackSpeed: 2
   AttackTimer: 0
-  DetectDistance: 10
-  ComebackDistance: 18
+  DetectDistance: 16
+  ComebackDistance: 24
   ComebackPosition: 0.1
   AttackDistance: 1.5
   KnockbackForce: 6

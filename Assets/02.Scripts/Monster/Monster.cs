@@ -48,8 +48,8 @@ public class Monster : PlayStateListener, IDamageable
     public float AttackSpeed = 2f;
     public float AttackTimer = 0f;
 
-    public float DetectDistance = 10f;
-    public float ComebackDistance = 16f;
+    public float DetectDistance = 16f;
+    public float ComebackDistance = 24f;
     public float ComebackPosition = 0.1f;
     public float AttackDistance = 1.5f;
 
@@ -69,6 +69,10 @@ public class Monster : PlayStateListener, IDamageable
 
     private Vector3 _jumpStartPosition;
     private Vector3 _jumpEndPosition;
+
+    private Coroutine _jumpCoroutine;
+    [SerializeField] private float _jumpDuration = 0.4f;
+    [SerializeField] private float _jumpHeight = 4f;
 
 
     private void Awake()
@@ -170,25 +174,55 @@ public class Monster : PlayStateListener, IDamageable
             _jumpStartPosition = linkData.startPos;
             _jumpEndPosition = linkData.endPos;
 
-            if (_jumpEndPosition.y > _jumpStartPosition.y)
+            if (NavMesh.SamplePosition(_jumpEndPosition, out var hit, 1.0f, NavMesh.AllAreas))
             {
-                Debug.Log("상태 전환: Trace → Jump");
-                State = EMonsterState.Jump;
-                return;
+                _jumpEndPosition = hit.position;
             }
+
+            State = EMonsterState.Jump;
+            return;
         }
     }
 
     private void Jump()
     {
-        // 1. 점프 거리와 내 이동속도를 계산해서 점프 시간을 구한다.
-        // 2. 점프 시간동안 포물선으로 이동한다.
-        // 3. 이동 후 다시 Trace로 돌아간다.
+        if (_jumpCoroutine != null) return;
+
         _agent.isStopped = true;
-        _agent.ResetPath();
+        _agent.updatePosition = false;
+        _agent.updateRotation = false;
+
+        _jumpCoroutine = StartCoroutine(Jump_Coroutine(_jumpStartPosition, _jumpEndPosition));
+    }
+
+    private IEnumerator Jump_Coroutine(Vector3 start, Vector3 end)
+    {
+        float t = 0f;
+
+        while (t < 1f)
+        {
+            t += Time.deltaTime / _jumpDuration;
+            float clampedT = Mathf.Clamp01(t);
+
+            Vector3 pos = Vector3.Lerp(start, end, clampedT);
+
+            float height = Mathf.Sin(clampedT * Mathf.PI) * _jumpHeight;
+            pos.y += height;
+
+            transform.position = pos;
+
+            yield return null;
+        }
+
+        transform.position = end;
         _agent.CompleteOffMeshLink();
 
-        transform.position = _jumpEndPosition;
+        _agent.Warp(end);
+
+        _agent.updatePosition = true;
+        _agent.isStopped = false;
+        _jumpCoroutine = null;
+
         Debug.Log("상태 전환: Jump → Trace");
         State = EMonsterState.Trace;
     }
