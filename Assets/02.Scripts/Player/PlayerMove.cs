@@ -4,7 +4,7 @@ using UnityEngine;
 // 키보드를 누르면 캐릭터를 그 방향으로 이동 시키고 싶다.
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(PlayerStats))]
-public class PlayerMove : MonoBehaviour
+public class PlayerMove : PlayStateListener
 {
     [Serializable]
     public class MoveConfig
@@ -33,7 +33,7 @@ public class PlayerMove : MonoBehaviour
 
     private void Update()
     {
-        if (GameManager.Instance.State != EGameState.Playing) return;
+        if (!IsPlaying) return;
 
         if (_controller.isGrounded)
         {
@@ -74,7 +74,6 @@ public class PlayerMove : MonoBehaviour
         // - 카메라가 쳐다보는 방향으로 변환한다. (월드 -> 로컬)
         direction = Camera.main.transform.TransformDirection(direction);
         direction.y = _yVelocity; // 중력 적용
-
 
 
         float moveSpeed = _stats.MoveSpeed.Value;

@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Monster : MonoBehaviour, IDamageable
+public class Monster : PlayStateListener, IDamageable
 {
     // 유한 상태머신 설명
     #region Comment
@@ -72,7 +72,7 @@ public class Monster : MonoBehaviour, IDamageable
     private float _idleTimer = 0f;
 
 
-    private void Start()
+    private void Awake()
     {
         _agent.speed = MoveSpeed;
         _agent.stoppingDistance = AttackDistance;
@@ -85,9 +85,10 @@ public class Monster : MonoBehaviour, IDamageable
         }
     }
 
+
     private void Update()
     {
-        if (GameManager.Instance.State != EGameState.Playing) return;
+        if (!IsPlaying) return;
 
         // 몬스터의 상태에 따라 다른 행동을 한다. (다른 메서드를 호출한다.)
         switch (State)
