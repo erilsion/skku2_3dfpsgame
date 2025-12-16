@@ -33,30 +33,26 @@ public class Monster : PlayStateListener, IDamageable
     [Header("컴포넌트 옵션")]
     [SerializeField] private NavMeshAgent _agent;
 
-    [Header("처음 생성 위치")]
     private Vector3 _spawnPosition;
 
-    [Header("플레이어 옵션")]
+    [Header("플레이어 관련 옵션")]
     [SerializeField] private GameObject _player;
     private Transform _playerTransform;
     private PlayerStats _playerStats;
 
     [Header("능력치")]
-    public ConsumableStat Health;
     [SerializeField] private float _damage = 10f;
+    public ConsumableStat Health;
 
-    [Header("이동 관련")]
     public float MoveSpeed = 5f;
     public float AttackSpeed = 2f;
     public float AttackTimer = 0f;
 
-    [Header("추격 관련")]
-    public float DetectDistance = 4f;
-    public float ComebackDistance = 8f;
+    public float DetectDistance = 16f;
+    public float ComebackDistance = 24f;
     public float ComebackPosition = 0.1f;
     public float AttackDistance = 1.5f;
 
-    [Header("넉백 관련")]
     public float KnockbackForce = 6f;
     public float KnockbackDuration = 0.4f;
     public float DeathDuration = 2f;
@@ -70,6 +66,13 @@ public class Monster : PlayStateListener, IDamageable
     private float _patrolArriveDistance = 0.1f;
     private float _idleToPatrolDelay = 2f;
     private float _idleTimer = 0f;
+
+    private Vector3 _jumpStartPosition;
+    private Vector3 _jumpEndPosition;
+
+    private Coroutine _jumpCoroutine;
+    [SerializeField] private float _jumpDuration = 0.4f;
+    [SerializeField] private float _jumpHeight = 4f;
 
 
     private void Awake()
@@ -112,6 +115,10 @@ public class Monster : PlayStateListener, IDamageable
             case EMonsterState.Patrol:
                 Patrol();
                 break;
+
+            case EMonsterState.Jump:
+                Jump();
+                break;
         }
     }
 
@@ -148,6 +155,8 @@ public class Monster : PlayStateListener, IDamageable
         }
 
         float distance = Vector3.Distance(transform.position, _player.transform.position);
+        _agent.SetDestination(_playerTransform.position);
+        // _agent.destination = _playerTransform.position;  위와 같은 기능을 하지만 함수로 쓰자
 
         if (distance <= AttackDistance)
         {
@@ -159,7 +168,63 @@ public class Monster : PlayStateListener, IDamageable
             Debug.Log("상태 전환: Trace → Comeback");
         }
 
-        _agent.SetDestination(_playerTransform.position);
+        if (_agent.isOnOffMeshLink)
+        {
+            OffMeshLinkData linkData = _agent.currentOffMeshLinkData;
+            _jumpStartPosition = linkData.startPos;
+            _jumpEndPosition = linkData.endPos;
+
+            if (NavMesh.SamplePosition(_jumpEndPosition, out var hit, 1.0f, NavMesh.AllAreas))
+            {
+                _jumpEndPosition = hit.position;
+            }
+
+            State = EMonsterState.Jump;
+            return;
+        }
+    }
+
+    private void Jump()
+    {
+        if (_jumpCoroutine != null) return;
+
+        _agent.isStopped = true;
+        _agent.updatePosition = false;
+        _agent.updateRotation = false;
+
+        _jumpCoroutine = StartCoroutine(Jump_Coroutine(_jumpStartPosition, _jumpEndPosition));
+    }
+
+    private IEnumerator Jump_Coroutine(Vector3 start, Vector3 end)
+    {
+        float t = 0f;
+
+        while (t < 1f)
+        {
+            t += Time.deltaTime / _jumpDuration;
+            float clampedT = Mathf.Clamp01(t);
+
+            Vector3 pos = Vector3.Lerp(start, end, clampedT);
+
+            float height = Mathf.Sin(clampedT * Mathf.PI) * _jumpHeight;
+            pos.y += height;
+
+            transform.position = pos;
+
+            yield return null;
+        }
+
+        transform.position = end;
+        _agent.CompleteOffMeshLink();
+
+        _agent.Warp(end);
+
+        _agent.updatePosition = true;
+        _agent.isStopped = false;
+        _jumpCoroutine = null;
+
+        Debug.Log("상태 전환: Jump → Trace");
+        State = EMonsterState.Trace;
     }
 
     private void Comeback()
@@ -175,6 +240,12 @@ public class Monster : PlayStateListener, IDamageable
         }
 
         _agent.SetDestination(_spawnPosition);
+
+        if (Vector3.Distance(transform.position, _player.transform.position) <= DetectDistance)
+        {
+            State = EMonsterState.Trace;
+            Debug.Log("상태 전환: Comeback -> Trace");
+        }
     }
 
     private void Attack()
@@ -236,7 +307,9 @@ public class Monster : PlayStateListener, IDamageable
     private IEnumerator Hit_Coroutine()
     {
         // Todo.Hit 애니메이션 실행
-        _agent.isStopped = true;
+
+        _agent.isStopped = true;  // 이동 일시 정지
+        _agent.ResetPath();  // 경로(목적지) 삭제
 
         float timer = 0f;
         while (timer < KnockbackDuration)
