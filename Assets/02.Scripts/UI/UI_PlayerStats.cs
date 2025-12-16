@@ -37,15 +37,28 @@ public class UI_PlayerStats : MonoBehaviour
     private void Start()
     {
         _healthFrontSliderFill.color = Color.red;
-
-        float h01 = GetHealth01();
-        _lastHealth01 = h01;
-
-        if (_healthFrontSlider != null) _healthFrontSlider.value = h01;
-        if (_healthBackSlider != null) _healthBackSlider.value = h01;
+        UpdateHealthUI(_stats.Health.Value, _stats.Health.MaxValue);
     }
 
     void Update()
+    {
+        if (_staminaSlider != null)
+        {
+            _staminaSlider.value = GaugeChanged(_stats.Stamina.Value, _stats.Stamina.MaxValue);
+        }
+    }
+
+    private void OnEnable()
+    {
+        if (_stats != null) _stats.OnHealthChanged += UpdateHealthUI;
+    }
+
+    private void OnDisable()
+    {
+        if (_stats != null) _stats.OnHealthChanged -= UpdateHealthUI;
+    }
+
+    private void UpdateHealthUI(float currentValue, float maxValue)
     {
         if (GameManager.Instance.State == EGameState.GameOver || _stats == null)
         {
@@ -55,7 +68,7 @@ public class UI_PlayerStats : MonoBehaviour
             return;
         }
 
-        float target = GetHealth01();
+        float target = GaugeChanged(currentValue, maxValue);
 
         if (target < _lastHealth01)
         {
@@ -63,7 +76,8 @@ public class UI_PlayerStats : MonoBehaviour
         }
         _lastHealth01 = target;
 
-        if (_healthFrontSlider != null) _healthFrontSlider.value = target;
+        if (_healthFrontSlider != null)
+            _healthFrontSlider.value = target;
 
         if (_healthBackSlider == null) return;
 
@@ -75,15 +89,7 @@ public class UI_PlayerStats : MonoBehaviour
         else
         {
             if (_backRoutine == null)
-            {
                 _backRoutine = StartCoroutine(BackBarFollow_Coroutine());
-            }
-            StopCoroutine(HitScreen_Coroutine());
-        }
-
-        if (_staminaSlider != null)
-        {
-            _staminaSlider.value = GaugeChanged(_stats.Stamina.Value, _stats.Stamina.MaxValue);
         }
     }
 

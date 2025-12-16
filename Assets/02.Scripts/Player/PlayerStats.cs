@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Rendering;
 
 // 플레이어의 '스탯'을 관리하는 컴포넌트
 public class PlayerStats : MonoBehaviour
@@ -20,6 +21,7 @@ public class PlayerStats : MonoBehaviour
     public ValueStat RunSpeed;
     public ValueStat JumpPower;
 
+    public event System.Action<float, float> OnHealthChanged;
 
     // 스태미나, 체력 스탯 관련 코드 (회복, 소모, 업그레이드...)
 
@@ -32,14 +34,22 @@ public class PlayerStats : MonoBehaviour
     private void Update()
     {
         float deltaTime = Time.deltaTime;
-
-        Health.Regenerate(deltaTime);
+        Regenerated(deltaTime);
         Stamina.Regenerate(deltaTime);
+    }
+
+    private void Regenerated(float time)
+    {
+        if (Health.Value >= Health.MaxValue) return;
+        Health.Regenerate(time);
+        UpdateHealth();
     }
 
     public bool TryTakeDamage(float damage)
     {
         bool depletedNow = Health.ApplyDamage(damage);
+
+        UpdateHealth();
 
         if (depletedNow)
         {
@@ -48,5 +58,10 @@ public class PlayerStats : MonoBehaviour
         }
 
         return true;
+    }
+
+    private void UpdateHealth()
+    {
+        OnHealthChanged?.Invoke(Health.Value, Health.MaxValue);
     }
 }
