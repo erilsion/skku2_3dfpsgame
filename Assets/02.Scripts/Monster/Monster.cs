@@ -48,8 +48,8 @@ public class Monster : PlayStateListener, IDamageable
     public float AttackSpeed = 2f;
     public float AttackTimer = 0f;
 
-    public float DetectDistance = 4f;
-    public float ComebackDistance = 8f;
+    public float DetectDistance = 10f;
+    public float ComebackDistance = 16f;
     public float ComebackPosition = 0.1f;
     public float AttackDistance = 1.5f;
 
@@ -232,7 +232,9 @@ public class Monster : PlayStateListener, IDamageable
     private IEnumerator Hit_Coroutine()
     {
         // Todo.Hit 애니메이션 실행
-        _agent.isStopped = true;
+
+        _agent.isStopped = true;  // 이동 일시 정지
+        _agent.ResetPath();  // 경로(목적지) 삭제
 
         float timer = 0f;
         while (timer < KnockbackDuration)

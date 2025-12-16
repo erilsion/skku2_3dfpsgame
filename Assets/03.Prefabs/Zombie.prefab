@@ -447,16 +447,16 @@ MonoBehaviour:
   State: 0
   _agent: {fileID: 7677239024383471136}
   _player: {fileID: 0}
+  _damage: 10
   Health:
     _maxValue: 100
     _value: 100
     _regenValue: 0
-  _damage: 10
   MoveSpeed: 5
   AttackSpeed: 2
   AttackTimer: 0
-  DetectDistance: 4
-  ComebackDistance: 8
+  DetectDistance: 10
+  ComebackDistance: 18
   ComebackPosition: 0.1
   AttackDistance: 1.5
   KnockbackForce: 6
@@ -481,7 +481,7 @@ NavMeshAgent:
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 0
+  m_StoppingDistance: 1.5
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 0
   m_AutoRepath: 1
