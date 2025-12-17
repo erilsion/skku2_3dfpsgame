@@ -36,6 +36,9 @@ public class PlayerMove : PlayStateListener
 
     [SerializeField] private CameraRotate _cameraRotate;
     [SerializeField] private float _followCamYawSpeed = 15f;
+    private float _reverseRotate = 180f;
+
+    public ECameraState State;
 
 
     private void Awake()
@@ -94,13 +97,22 @@ public class PlayerMove : PlayStateListener
         if (!IsPlaying) return;
 
         if (_cameraRotate == null)
+        {
             _cameraRotate = Camera.main.GetComponent<CameraRotate>();
+        }
 
-        if (!Input.GetMouseButton(1)) return;
-
-        float targetYaw = _cameraRotate.Yaw;
-        Quaternion targetRot = Quaternion.Euler(0f, targetYaw, 0f);
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, _followCamYawSpeed * Time.deltaTime);
+        if (State == ECameraState.TPS || State == ECameraState.TopView)
+        {
+            float targetYaw = _cameraRotate.Yaw + _reverseRotate;
+            Quaternion targetRot = Quaternion.Euler(0f, targetYaw, 0f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, _followCamYawSpeed * Time.deltaTime);
+        }
+        else
+        {
+            float targetYaw = _cameraRotate.Yaw;
+            Quaternion targetRot = Quaternion.Euler(0f, targetYaw, 0f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, _followCamYawSpeed * Time.deltaTime);
+        }
     }
 
     private void ManualMove(float x, float z)
