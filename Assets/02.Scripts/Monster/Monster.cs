@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -39,9 +40,10 @@ public class Monster : PlayStateListener, IDamageable
     [SerializeField] private GameObject _player;
     private Transform _playerTransform;
     private PlayerStats _playerStats;
+    [SerializeField] private Animator _animator;
 
     [Header("능력치")]
-    [SerializeField] private float _damage = 10f;
+    public float Damage = 10f;
     public ConsumableStat Health;
 
     public float MoveSpeed = 5f;
@@ -77,6 +79,11 @@ public class Monster : PlayStateListener, IDamageable
 
     private void Awake()
     {
+        if (_animator == null)
+        {
+            _animator = GetComponentInChildren<Animator>();
+        }
+
         _agent.speed = MoveSpeed;
         _agent.stoppingDistance = AttackDistance;
 
@@ -132,6 +139,7 @@ public class Monster : PlayStateListener, IDamageable
         if (Vector3.Distance(transform.position, _player.transform.position) <= DetectDistance)
         {
             State = EMonsterState.Trace;
+            _animator.SetTrigger("IdleToTrace");
             Debug.Log("상태 전환: Idle -> Trace");
         }
 
@@ -161,6 +169,7 @@ public class Monster : PlayStateListener, IDamageable
         if (distance <= AttackDistance)
         {
             State = EMonsterState.Attack;
+            _animator.SetTrigger("TraceToAttackIdle");
         }
         else if (distance > ComebackDistance)
         {
@@ -262,6 +271,7 @@ public class Monster : PlayStateListener, IDamageable
         if (distance > AttackDistance)
         {
             State = EMonsterState.Trace;
+            _animator.SetTrigger("AttackIdleToTrace");
             return;
         }
 
@@ -270,7 +280,7 @@ public class Monster : PlayStateListener, IDamageable
         {
             if (_playerStats != null)
             {
-                _playerStats.TryTakeDamage(_damage);
+                _playerStats.TryTakeDamage(Damage);
                 Debug.Log("플레이어 공격!");
             }
 

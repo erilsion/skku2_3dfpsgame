@@ -931,7 +931,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
+  m_VoxelSize: 0.083333336
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 84f539cc27089b643998646428c7ec0a, type: 2}
   m_BuildHeightMesh: 0
@@ -5905,10 +5905,6 @@ PrefabInstance:
       propertyPath: _player
       value: 
       objectReference: {fileID: 397518654}
-    - target: {fileID: 5063958351441852894, guid: ad4d05e3ccb401a4aa71e56d16f35879, type: 3}
-      propertyPath: DetectDistance
-      value: 10
-      objectReference: {fileID: 0}
     - target: {fileID: 5063958351441852894, guid: ad4d05e3ccb401a4aa71e56d16f35879, type: 3}
       propertyPath: '_patrolPoints.Array.data[0]'
       value: 
