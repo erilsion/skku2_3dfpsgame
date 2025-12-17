@@ -71,7 +71,7 @@ public class Monster : PlayStateListener, IDamageable
     private Vector3 _jumpEndPosition;
 
     private Coroutine _jumpCoroutine;
-    [SerializeField] private float _jumpDuration = 0.4f;
+    [SerializeField] private float _jumpDuration = 0.6f;
     [SerializeField] private float _jumpHeight = 4f;
 
 

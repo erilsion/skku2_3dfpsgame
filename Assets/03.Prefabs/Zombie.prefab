@@ -467,6 +467,8 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   _patrolWaitTime: 3
+  _jumpDuration: 0.6
+  _jumpHeight: 4
 --- !u!195 &7677239024383471136
 NavMeshAgent:
   m_ObjectHideFlags: 0
