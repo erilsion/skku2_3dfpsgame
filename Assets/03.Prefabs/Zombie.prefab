@@ -458,7 +458,7 @@ MonoBehaviour:
   DetectDistance: 16
   ComebackDistance: 24
   ComebackPosition: 0.1
-  AttackDistance: 1.5
+  AttackDistance: 2.2
   KnockbackForce: 6
   KnockbackDuration: 0.4
   DeathDuration: 2

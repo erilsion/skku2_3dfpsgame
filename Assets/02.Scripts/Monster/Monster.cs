@@ -51,7 +51,7 @@ public class Monster : PlayStateListener, IDamageable
     public float DetectDistance = 16f;
     public float ComebackDistance = 24f;
     public float ComebackPosition = 0.1f;
-    public float AttackDistance = 1.5f;
+    public float AttackDistance = 2.2f;
 
     public float KnockbackForce = 6f;
     public float KnockbackDuration = 0.4f;
