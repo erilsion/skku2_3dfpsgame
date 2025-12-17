@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -39,9 +40,10 @@ public class Monster : PlayStateListener, IDamageable
     [SerializeField] private GameObject _player;
     private Transform _playerTransform;
     private PlayerStats _playerStats;
+    private Animator _animator;
 
     [Header("능력치")]
-    [SerializeField] private float _damage = 10f;
+    public float Damage = 10f;
     public ConsumableStat Health;
 
     public float MoveSpeed = 5f;
@@ -53,8 +55,9 @@ public class Monster : PlayStateListener, IDamageable
     public float ComebackPosition = 0.1f;
     public float AttackDistance = 2.2f;
 
-    public float KnockbackForce = 6f;
+    public float KnockbackForce = 2f;
     public float KnockbackDuration = 0.4f;
+    public float HitDuration = 1.2f;
     public float DeathDuration = 2f;
     private Vector3 _knockbackDirection;
 
@@ -77,6 +80,11 @@ public class Monster : PlayStateListener, IDamageable
 
     private void Awake()
     {
+        if (_animator == null)
+        {
+            _animator = GetComponentInChildren<Animator>();
+        }
+
         _agent.speed = MoveSpeed;
         _agent.stoppingDistance = AttackDistance;
 
@@ -132,6 +140,7 @@ public class Monster : PlayStateListener, IDamageable
         if (Vector3.Distance(transform.position, _player.transform.position) <= DetectDistance)
         {
             State = EMonsterState.Trace;
+            _animator.SetTrigger("IdleToTrace");
             Debug.Log("상태 전환: Idle -> Trace");
         }
 
@@ -161,6 +170,7 @@ public class Monster : PlayStateListener, IDamageable
         if (distance <= AttackDistance)
         {
             State = EMonsterState.Attack;
+            _animator.SetTrigger("TraceToAttackIdle");
         }
         else if (distance > ComebackDistance)
         {
@@ -262,6 +272,7 @@ public class Monster : PlayStateListener, IDamageable
         if (distance > AttackDistance)
         {
             State = EMonsterState.Trace;
+            _animator.SetTrigger("AttackIdleToTrace");
             return;
         }
 
@@ -270,7 +281,7 @@ public class Monster : PlayStateListener, IDamageable
         {
             if (_playerStats != null)
             {
-                _playerStats.TryTakeDamage(_damage);
+                _playerStats.TryTakeDamage(Damage);
                 Debug.Log("플레이어 공격!");
             }
 
@@ -307,6 +318,7 @@ public class Monster : PlayStateListener, IDamageable
     private IEnumerator Hit_Coroutine()
     {
         // Todo.Hit 애니메이션 실행
+        _animator.SetTrigger("Hit");
 
         _agent.isStopped = true;  // 이동 일시 정지
         _agent.ResetPath();  // 경로(목적지) 삭제
@@ -318,6 +330,9 @@ public class Monster : PlayStateListener, IDamageable
             timer += Time.deltaTime;
             yield return null;
         }
+
+        yield return new WaitForSeconds(HitDuration);
+
         _agent.isStopped = false;
 
         if (Vector3.Distance(transform.position, _player.transform.position) <= DetectDistance)

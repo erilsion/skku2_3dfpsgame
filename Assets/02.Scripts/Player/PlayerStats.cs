@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.Rendering;
 
 // 플레이어의 '스탯'을 관리하는 컴포넌트
 public class PlayerStats : MonoBehaviour
