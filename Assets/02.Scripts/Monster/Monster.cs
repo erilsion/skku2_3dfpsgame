@@ -40,7 +40,7 @@ public class Monster : PlayStateListener, IDamageable
     [SerializeField] private GameObject _player;
     private Transform _playerTransform;
     private PlayerStats _playerStats;
-    [SerializeField] private Animator _animator;
+    private Animator _animator;
 
     [Header("능력치")]
     public float Damage = 10f;

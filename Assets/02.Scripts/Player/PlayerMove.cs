@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -27,6 +28,7 @@ public class PlayerMove : PlayStateListener
     private CharacterController _controller;
     private PlayerStats _stats;
     private NavMeshAgent _agent;
+    private Animator _animator;
 
     private float _yVelocity = 0f;   // 중력에 의해 누적될 y값 변수
     private bool _canDoubleJump = false;
@@ -38,6 +40,7 @@ public class PlayerMove : PlayStateListener
         _controller = GetComponent<CharacterController>();
         _stats = GetComponent<PlayerStats>();
         _agent = GetComponent<NavMeshAgent>();
+        _animator = GetComponentInChildren<Animator>();
 
         _agent.updatePosition = false;
         _agent.updateRotation = false;
@@ -86,6 +89,7 @@ public class PlayerMove : PlayStateListener
     private void ManualMove(float x, float z)
     {
         Vector3 direction = new Vector3(x, 0, z);
+        _animator.SetFloat("Speed", direction.magnitude);
         direction.Normalize();
 
         // 카메라 기준 이동
@@ -119,6 +123,7 @@ public class PlayerMove : PlayStateListener
 
         Vector3 desired = _agent.desiredVelocity; // "다음 방향"을 알려줌
         desired.y = 0f;
+        _animator.SetFloat("Speed", desired.magnitude);
 
         float moveSpeed = GetMoveSpeed();
         Vector3 move = desired.normalized * moveSpeed;
