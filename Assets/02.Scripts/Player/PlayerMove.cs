@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -34,6 +33,10 @@ public class PlayerMove : PlayStateListener
     private bool _canDoubleJump = false;
 
     private bool _isAutoMoving = false;
+
+    [SerializeField] private CameraRotate _cameraRotate;
+    [SerializeField] private float _followCamYawSpeed = 15f;
+
 
     private void Awake()
     {
@@ -84,6 +87,20 @@ public class PlayerMove : PlayStateListener
         {
             ManualMove(x, y);
         }
+    }
+
+    private void LateUpdate()
+    {
+        if (!IsPlaying) return;
+
+        if (_cameraRotate == null)
+            _cameraRotate = Camera.main.GetComponent<CameraRotate>();
+
+        if (!Input.GetMouseButton(1)) return;
+
+        float targetYaw = _cameraRotate.Yaw;
+        Quaternion targetRot = Quaternion.Euler(0f, targetYaw, 0f);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, _followCamYawSpeed * Time.deltaTime);
     }
 
     private void ManualMove(float x, float z)

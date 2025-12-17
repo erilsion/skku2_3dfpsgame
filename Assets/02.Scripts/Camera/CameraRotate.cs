@@ -10,6 +10,8 @@ public class CameraRotate : PlayStateListener
     private float _accumulationX = 0f;
     private float _accumulationY = 0f;
 
+    public float Yaw => _accumulationX;
+
 
     private void Update()
     {
