@@ -352,6 +352,7 @@ public class Monster : PlayStateListener, IDamageable
     private IEnumerator Death_Coroutine()
     {
         // Todo.Death 애니메이션 실행
+        _animator.SetTrigger("Death");
 
         _agent.isStopped = true;
 
