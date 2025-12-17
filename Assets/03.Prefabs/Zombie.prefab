@@ -461,8 +461,8 @@ MonoBehaviour:
   ComebackDistance: 24
   ComebackPosition: 0.1
   AttackDistance: 2.2
-  KnockbackForce: 6
-  KnockbackDuration: 0.4
+  KnockbackForce: 2
+  KnockbackDuration: 0.8
   DeathDuration: 2
   _patrolPoints:
   - {fileID: 0}

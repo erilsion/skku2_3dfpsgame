@@ -55,8 +55,9 @@ public class Monster : PlayStateListener, IDamageable
     public float ComebackPosition = 0.1f;
     public float AttackDistance = 2.2f;
 
-    public float KnockbackForce = 6f;
+    public float KnockbackForce = 2f;
     public float KnockbackDuration = 0.4f;
+    public float HitDuration = 1.2f;
     public float DeathDuration = 2f;
     private Vector3 _knockbackDirection;
 
@@ -317,6 +318,7 @@ public class Monster : PlayStateListener, IDamageable
     private IEnumerator Hit_Coroutine()
     {
         // Todo.Hit 애니메이션 실행
+        _animator.SetTrigger("Hit");
 
         _agent.isStopped = true;  // 이동 일시 정지
         _agent.ResetPath();  // 경로(목적지) 삭제
@@ -328,6 +330,9 @@ public class Monster : PlayStateListener, IDamageable
             timer += Time.deltaTime;
             yield return null;
         }
+
+        yield return new WaitForSeconds(HitDuration);
+
         _agent.isStopped = false;
 
         if (Vector3.Distance(transform.position, _player.transform.position) <= DetectDistance)
