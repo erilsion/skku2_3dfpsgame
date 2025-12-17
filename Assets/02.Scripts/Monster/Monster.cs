@@ -50,8 +50,8 @@ public class Monster : PlayStateListener, IDamageable
     public float AttackSpeed = 2f;
     public float AttackTimer = 0f;
 
-    public float DetectDistance = 16f;
-    public float ComebackDistance = 24f;
+    public float DetectDistance = 12f;
+    public float ComebackDistance = 16f;
     public float ComebackPosition = 0.1f;
     public float AttackDistance = 2.2f;
 
@@ -74,7 +74,7 @@ public class Monster : PlayStateListener, IDamageable
     private Vector3 _jumpEndPosition;
 
     private Coroutine _jumpCoroutine;
-    [SerializeField] private float _jumpDuration = 0.6f;
+    [SerializeField] private float _jumpDuration = 0.9f;
     [SerializeField] private float _jumpHeight = 4f;
 
 
@@ -184,6 +184,8 @@ public class Monster : PlayStateListener, IDamageable
             _jumpStartPosition = linkData.startPos;
             _jumpEndPosition = linkData.endPos;
 
+            _animator.SetTrigger("TraceToJump");
+
             if (NavMesh.SamplePosition(_jumpEndPosition, out var hit, 1.0f, NavMesh.AllAreas))
             {
                 _jumpEndPosition = hit.position;
@@ -244,8 +246,8 @@ public class Monster : PlayStateListener, IDamageable
 
         if (distance < ComebackPosition)
         {
-            State = EMonsterState.Idle;
             Debug.Log("상태 전환: Comeback → Idle");
+            State = EMonsterState.Idle;
             return;
         }
 
@@ -337,12 +339,14 @@ public class Monster : PlayStateListener, IDamageable
 
         if (Vector3.Distance(transform.position, _player.transform.position) <= DetectDistance)
         {
+            _animator.SetTrigger("IdleToTrace");
             State = EMonsterState.Trace;
         }
         else
         {
             State = EMonsterState.Idle;
         }
+        StopCoroutine(Hit_Coroutine());
     }
 
     private IEnumerator Death_Coroutine()
