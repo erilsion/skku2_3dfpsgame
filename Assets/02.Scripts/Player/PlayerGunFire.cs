@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class PlayerGunFire : PlayStateListener
 {
@@ -31,17 +30,18 @@ public class PlayerGunFire : PlayStateListener
     [Header("데미지")]
     [SerializeField] private int _damage = 10;
 
+    private Animator _animator;
+
 
     private void Awake()
     {
         _currentBullet = _maxBullet;
+        _animator = GetComponentInChildren<Animator>();
     }
 
     private void Update()
     {
         if (!IsPlaying) return;
-
-        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
         
         _fireTimer += Time.deltaTime;
 
@@ -78,6 +78,8 @@ public class PlayerGunFire : PlayStateListener
         if (Input.GetMouseButton(0))
         {
             if (_currentBullet <= 0) return;
+
+            _animator.SetTrigger("Attack");
 
             // 2. Ray를 생성하고 발사할 위치, 방향, 거리를 설정한다. (쏜다.)
             Ray ray = new Ray(_fireTransform.position, Camera.main.transform.forward);

@@ -201,12 +201,15 @@ public class PlayerMove : PlayStateListener
     {
         if (Input.GetButtonDown("Jump") && _controller.isGrounded)
         {
+            _animator.SetTrigger("Jump");
+
             _yVelocity = _stats.JumpPower.Value;
         }
         else if (_canDoubleJump == false && !_controller.isGrounded)
         {
             if (Input.GetButtonDown("Jump") && _stats.Stamina.TryConsume(_config.DoubleJumpStamina))
             {
+                _animator.SetTrigger("Jump");
                 _canDoubleJump = true;
                 _yVelocity = _stats.JumpPower.Value;
             }
