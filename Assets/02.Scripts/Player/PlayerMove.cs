@@ -125,6 +125,12 @@ public class PlayerMove : PlayStateListener
         move.y = _yVelocity;
 
         _controller.Move(move * Time.deltaTime);
+
+        if (desired.sqrMagnitude > 0.001f)
+        {
+            Quaternion targetRot = Quaternion.LookRotation(desired);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * _config.AutoTurnSpeed);
+        }
     }
 
     private float GetMoveSpeed()
