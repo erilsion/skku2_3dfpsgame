@@ -6,6 +6,7 @@ public class PlayerGunFire : PlayStateListener
 
     [Header("발사 위치")]
     [SerializeField] private Transform _fireTransform;
+    [SerializeField] private Transform _muzzleTransform;
 
     [Header("피격 이펙트")]
     [SerializeField] private ParticleSystem _hitEffect;
@@ -39,7 +40,6 @@ public class PlayerGunFire : PlayStateListener
     {
         _currentBullet = _maxBullet;
         _animator = GetComponentInChildren<Animator>();
-        _flashEffectPrefab.SetActive(false);
     }
 
     private void Update()
@@ -83,13 +83,16 @@ public class PlayerGunFire : PlayStateListener
             if (_currentBullet <= 0) return;
 
             _animator.SetTrigger("Attack");
-            _flashEffectPrefab.SetActive(true);
+
+            GameObject flash = Instantiate(_flashEffectPrefab, _muzzleTransform);
 
             // 2. Ray를 생성하고 발사할 위치, 방향, 거리를 설정한다. (쏜다.)
             Ray ray = new Ray(_fireTransform.position, Camera.main.transform.forward);
 
             // 3. RayCastHit(충돌한 대상의 정보)를 저장할 변수를 생성한다.
             RaycastHit hitInfo = new RaycastHit();
+
+            CameraRecoil.Instance.DoRecoil();
 
             // 4. 어떤 대상과 충돌했다면 피격 이펙트 표시
             bool isHit = Physics.Raycast(ray, out hitInfo);
@@ -120,9 +123,6 @@ public class PlayerGunFire : PlayStateListener
                     damageable.TryTakeDamage(_damage);
                 }
 
-                CameraRecoil.Instance.DoRecoil();
-
-                _flashEffectPrefab.SetActive(false);
                 _fireTimer = 0f;
             }
         }
