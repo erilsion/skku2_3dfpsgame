@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class PlayerGunFire : PlayStateListener
 {
-    // 목표: 마우스 왼쪽 버튼을 누르면 카메라(플레이어)가 바라보는 방향으로 총알을 발사하고 싶다. (총알을 날리고 싶다.)
-
     [Header("발사 위치")]
     [SerializeField] private Transform _fireTransform;
     [SerializeField] private List<GameObject> _muzzleEffects;
@@ -46,6 +44,13 @@ public class PlayerGunFire : PlayStateListener
 
     private Coroutine _tracerRoutine;
 
+    [Header("조준 보정")]
+    [SerializeField] private LayerMask _aimMask;
+    [SerializeField] private float _aimMaxDistance = 200f;
+    [SerializeField] private bool _flattenYInTopView = true;
+
+    [Header("카메라 상태(선택)")]
+    [SerializeField] private CameraFollow _cameraFollow;
 
     private void Awake()
     {
@@ -62,7 +67,7 @@ public class PlayerGunFire : PlayStateListener
     private void Update()
     {
         if (!IsPlaying) return;
-        
+
         _fireTimer += Time.deltaTime;
 
         if (_isReloading)
@@ -83,7 +88,6 @@ public class PlayerGunFire : PlayStateListener
 
         if (Input.GetKeyDown(KeyCode.R) && _currentBullet < _maxBullet)
         {
-            if (_currentBullet >= _maxBullet) return;
             if (_reserveBullet <= 0) return;
 
             _isReloading = true;
@@ -94,78 +98,95 @@ public class PlayerGunFire : PlayStateListener
 
         if (_fireTimer < _fireCooltime) return;
 
-        // 1. 마우스 왼쪽 버튼이 눌린다면
         if (Input.GetMouseButton(0))
         {
-            Shoot();
-            StartCoroutine(MuzzleEffect_Coroutine());
+            if (Shoot()) StartCoroutine(MuzzleEffect_Coroutine());
         }
     }
 
-    private void Shoot()
+    private bool Shoot()
     {
-        if (_currentBullet <= 0) return;
+        if (_currentBullet <= 0) return false;
 
         _animator.SetTrigger("Attack");
 
-        Vector3 direction = Camera.main.transform.forward;
-        Vector3 start = _fireTransform.position + direction * _startOffset;
+        Vector3 aimPoint = GetAimPoint();
+        Vector3 direction = (aimPoint - _fireTransform.position);
 
-        // 2. Ray를 생성하고 발사할 위치, 방향, 거리를 설정한다. (쏜다.)
+        if (_flattenYInTopView && IsTopView())
+        {
+            direction.y = 0f;
+        }
+        if (direction.sqrMagnitude < 0.0001f)
+        {
+            direction = _fireTransform.forward;
+        }
+        direction.Normalize();
+
+        Vector3 start = _fireTransform.position + direction * _startOffset;
         Ray ray = new Ray(_fireTransform.position, direction);
 
-        // 3. RayCastHit(충돌한 대상의 정보)를 저장할 변수를 생성한다.
-        RaycastHit hitInfo = new RaycastHit();
+        bool isHit = Physics.Raycast(ray, out RaycastHit hitInfo, _maxRange);
+        Vector3 end = isHit ? hitInfo.point : (_fireTransform.position + direction * _maxRange);
 
-        // 4. 어떤 대상과 충돌했다면 피격 이펙트 표시
-        bool isHit = Physics.Raycast(ray, out hitInfo, _maxRange);
-        Vector3 end = isHit ? hitInfo.point : (start + direction * _maxRange);
         PlayTracerTravel(start, end);
+
+        _currentBullet--;
 
         if (isHit)
         {
-            Debug.Log(hitInfo.transform.name);
-
-            _currentBullet--;
-
-            _hitEffect.transform.position = hitInfo.point;
-            _hitEffect.transform.forward = hitInfo.normal;
-
-            _hitEffect.Play();
+            if (_hitEffect != null)
+            {
+                _hitEffect.transform.position = hitInfo.point;
+                _hitEffect.transform.forward = hitInfo.normal;
+                _hitEffect.Play();
+            }
 
             if (hitInfo.collider.TryGetComponent<IDamageable>(out var damageable))
             {
                 damageable.TryTakeDamage(_damage);
             }
         }
-        else
-        {
-            _currentBullet--;
-        }
 
         CameraRecoil.Instance.DoRecoil();
         _fireTimer = 0f;
+
+        return true;
     }
 
-    // 파티클 생성과 플레이 방식
-    // 1. Instantiate 방식 (+ 풀링) -> 한 화면에 여러가지 수정 후 여러 개 그릴 경우. 새로 생성 (메모리, CPU)
-    // 2. 하나를 캐싱해두고 Play    -> 인스펙터 설정 그대로 그릴 경우. 한 화면에 한번만 그릴 경우. 단점: 재실행이므로 기존 게 삭제
-    // 3. 하나를 캐싱해두고 Emit    -> 인스펙터 설정을 수정한 후 그릴 경우. 한 화면에 위치만 수정 후 여러 개 그릴 경우
+    private Vector3 GetAimPoint()
+    {
+        Camera cam = Camera.main;
+        if (cam == null)
+        {
+            return _fireTransform.position + _fireTransform.forward * _aimMaxDistance;
+        }
 
-    // ParticleSystem.EmitParams emitParams = new ParticleSystem.EmitParams();
-    // emitParams.position = hitInfo.point;
-    // emitParams.rotation3D = Quaternion.LookRotation(hitInfo.normal).eulerAngles;
+        Ray camRay = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+        int mask = (_aimMask.value == 0) ? Physics.DefaultRaycastLayers : _aimMask;
 
-    // _hitEffect.Emit(emitParams, 1);    커스텀할 정보, 분출 횟수
+        if (Physics.Raycast(camRay, out RaycastHit hit, _aimMaxDistance, mask))
+        {
+            return hit.point;
+        }
+        return camRay.origin + camRay.direction * _aimMaxDistance;
+    }
+
+    private bool IsTopView()
+    {
+        if (_cameraFollow == null) return false;
+        return _cameraFollow.State == ECameraState.TopView;
+    }
 
     private IEnumerator MuzzleEffect_Coroutine()
     {
+        if (_muzzleEffects == null || _muzzleEffects.Count == 0) yield break;
+
         GameObject muzzleEffect = _muzzleEffects[Random.Range(0, _muzzleEffects.Count)];
+        if (muzzleEffect == null) yield break;
 
         muzzleEffect.SetActive(true);
-
         yield return new WaitForSeconds(_shootTime);
-
         muzzleEffect.SetActive(false);
     }
 

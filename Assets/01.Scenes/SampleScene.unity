@@ -1587,6 +1587,12 @@ MonoBehaviour:
   _tracerStayTime: 0.02
   _tracerTailTime: 0.02
   _startOffset: 0.1
+  _aimMask:
+    serializedVersion: 2
+    m_Bits: 0
+  _aimMaxDistance: 200
+  _flattenYInTopView: 1
+  _cameraFollow: {fileID: 0}
 --- !u!195 &397518668
 NavMeshAgent:
   m_ObjectHideFlags: 0
