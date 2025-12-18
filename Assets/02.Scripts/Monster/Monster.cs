@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -69,6 +68,10 @@ public class Monster : PlayStateListener, IDamageable
     private float _patrolArriveDistance = 0.1f;
     private float _idleToPatrolDelay = 2f;
     private float _idleTimer = 0f;
+    private float _patrolRadius = 1f;
+    [SerializeField] private Transform _patrolCenter;
+    private Vector3 _currentPatrolTarget;
+    private bool _hasPatrolTarget = false;
 
     private Vector3 _jumpStartPosition;
     private Vector3 _jumpEndPosition;
@@ -76,6 +79,8 @@ public class Monster : PlayStateListener, IDamageable
     private Coroutine _jumpCoroutine;
     [SerializeField] private float _jumpDuration = 0.9f;
     [SerializeField] private float _jumpHeight = 4f;
+
+    private static readonly int HashSpeed = Animator.StringToHash("Speed");
 
 
     private void Awake()
@@ -88,7 +93,15 @@ public class Monster : PlayStateListener, IDamageable
         _agent.speed = MoveSpeed;
         _agent.stoppingDistance = AttackDistance;
 
-        _spawnPosition = transform.position;
+        if (NavMesh.SamplePosition(transform.position, out var hit, 2f, NavMesh.AllAreas))
+        {
+            _spawnPosition = hit.position;
+        }
+        else
+        {
+            _spawnPosition = transform.position;
+        }
+
         if (_player != null)
         {
             _playerStats = _player.GetComponent<PlayerStats>();
@@ -130,6 +143,26 @@ public class Monster : PlayStateListener, IDamageable
         }
     }
 
+    private void LateUpdate()
+    {
+        if (!IsPlaying) return;
+        UpdateMoveBlend();
+    }
+
+    private void UpdateMoveBlend()
+    {
+        if (_animator == null || _agent == null) return;
+
+        float currentSpeed = _agent.velocity.magnitude;
+
+        float normalized = (MoveSpeed <= 0f) ? 0f : Mathf.Clamp01(currentSpeed / MoveSpeed);
+
+        if (State == EMonsterState.Attack || State == EMonsterState.Hit || State == EMonsterState.Death) normalized = 0f;
+
+        _animator.SetFloat(HashSpeed, normalized, 0.1f, Time.deltaTime);
+    }
+
+
     // 1. 함수는 한 가지 일만 잘해야 한다.
     // 2. 상태별 행동을 함수로 만든다.
     private void Idle()
@@ -140,16 +173,19 @@ public class Monster : PlayStateListener, IDamageable
         if (Vector3.Distance(transform.position, _player.transform.position) <= DetectDistance)
         {
             State = EMonsterState.Trace;
-            _animator.SetTrigger("IdleToTrace");
             Debug.Log("상태 전환: Idle -> Trace");
         }
 
         _idleTimer += Time.deltaTime;
-        if (_idleTimer >= _idleToPatrolDelay && _patrolPoints != null && _patrolPoints.Length > 0)
+        if (_idleTimer >= _idleToPatrolDelay)
         {
             State = EMonsterState.Patrol;
             Debug.Log("상태 전환: Idle -> Patrol");
             _idleTimer = 0f;
+
+            _hasPatrolTarget = false;
+            _patrolWaitTimer = 0f;
+            _agent.ResetPath();
         }
     }
 
@@ -170,7 +206,6 @@ public class Monster : PlayStateListener, IDamageable
         if (distance <= AttackDistance)
         {
             State = EMonsterState.Attack;
-            _animator.SetTrigger("TraceToAttackIdle");
         }
         else if (distance > ComebackDistance)
         {
@@ -274,7 +309,6 @@ public class Monster : PlayStateListener, IDamageable
         if (distance > AttackDistance)
         {
             State = EMonsterState.Trace;
-            _animator.SetTrigger("AttackIdleToTrace");
             return;
         }
 
@@ -341,7 +375,6 @@ public class Monster : PlayStateListener, IDamageable
 
         if (Vector3.Distance(transform.position, _player.transform.position) <= DetectDistance)
         {
-            _animator.SetTrigger("IdleToTrace");
             State = EMonsterState.Trace;
         }
         else
@@ -381,29 +414,42 @@ public class Monster : PlayStateListener, IDamageable
             }
         }
 
-        if (_patrolPoints == null || _patrolPoints.Length == 0)
+        if (!_hasPatrolTarget)
         {
-            State = EMonsterState.Idle;
+            _currentPatrolTarget = GetRandomPatrolPoint();
+            _agent.stoppingDistance = 0f;
+            _agent.SetDestination(_currentPatrolTarget);
+            _hasPatrolTarget = true;
+            _patrolWaitTimer = 0f;
             return;
         }
 
-        Transform targetPoint = _patrolPoints[_currentPatrolIndex];
-        _agent.SetDestination(targetPoint.position);
-        float distance = Vector3.Distance(transform.position, targetPoint.position);
-
-        if (distance <= _patrolArriveDistance)
+        if (!_agent.pathPending &&
+            _agent.remainingDistance <= Mathf.Max(_patrolArriveDistance, _agent.stoppingDistance + 0.05f))
         {
             _patrolWaitTimer += Time.deltaTime;
+
             if (_patrolWaitTimer >= _patrolWaitTime)
             {
-                _currentPatrolIndex++;
-                if (_currentPatrolIndex >= _patrolPoints.Length)
-                {
-                    _currentPatrolIndex = 0;
-                }
-
-                _patrolWaitTimer = 0f;
+                _hasPatrolTarget = false;
+                _agent.ResetPath();
             }
         }
+    }
+
+    private Vector3 GetRandomPatrolPoint()
+    {
+        Vector3 center = (_patrolCenter != null) ? _patrolCenter.position : _spawnPosition;
+
+        for (int i = 0; i < 8; i++)
+        {
+            Vector2 r = Random.insideUnitCircle * _patrolRadius;
+            Vector3 candidate = center + new Vector3(r.x, 0f, r.y);
+
+            if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
+                return hit.position;
+        }
+
+        return center;
     }
 }
