@@ -32,11 +32,14 @@ public class PlayerGunFire : PlayStateListener
 
     private Animator _animator;
 
+    [SerializeField] private GameObject _flashEffectPrefab;
+
 
     private void Awake()
     {
         _currentBullet = _maxBullet;
         _animator = GetComponentInChildren<Animator>();
+        _flashEffectPrefab.SetActive(false);
     }
 
     private void Update()
@@ -80,6 +83,7 @@ public class PlayerGunFire : PlayStateListener
             if (_currentBullet <= 0) return;
 
             _animator.SetTrigger("Attack");
+            _flashEffectPrefab.SetActive(true);
 
             // 2. Ray를 생성하고 발사할 위치, 방향, 거리를 설정한다. (쏜다.)
             Ray ray = new Ray(_fireTransform.position, Camera.main.transform.forward);
@@ -118,6 +122,7 @@ public class PlayerGunFire : PlayStateListener
 
                 CameraRecoil.Instance.DoRecoil();
 
+                _flashEffectPrefab.SetActive(false);
                 _fireTimer = 0f;
             }
         }
