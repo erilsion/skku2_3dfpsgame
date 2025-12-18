@@ -448,7 +448,6 @@ MonoBehaviour:
   State: 0
   _agent: {fileID: 7677239024383471136}
   _player: {fileID: 0}
-  _animator: {fileID: 0}
   Damage: 10
   Health:
     _maxValue: 100
@@ -457,19 +456,20 @@ MonoBehaviour:
   MoveSpeed: 5
   AttackSpeed: 2
   AttackTimer: 0
-  DetectDistance: 10
-  ComebackDistance: 24
+  DetectDistance: 12
+  ComebackDistance: 16
   ComebackPosition: 0.1
   AttackDistance: 2.2
   KnockbackForce: 2
   KnockbackDuration: 0.8
+  HitDuration: 1.2
   DeathDuration: 2
   _patrolPoints:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   _patrolWaitTime: 3
-  _jumpDuration: 0.6
+  _jumpDuration: 0.9
   _jumpHeight: 4
 --- !u!195 &7677239024383471136
 NavMeshAgent:
@@ -543,6 +543,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: bd050c0aef5008c4c95672f2b5c233b8, type: 2}
+    - target: {fileID: -6057140222963153312, guid: 8f7380da49034cd488ddff94b1ac35d1, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 8f7380da49034cd488ddff94b1ac35d1, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

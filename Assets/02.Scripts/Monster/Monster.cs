@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -50,8 +49,8 @@ public class Monster : PlayStateListener, IDamageable
     public float AttackSpeed = 2f;
     public float AttackTimer = 0f;
 
-    public float DetectDistance = 16f;
-    public float ComebackDistance = 24f;
+    public float DetectDistance = 12f;
+    public float ComebackDistance = 16f;
     public float ComebackPosition = 0.1f;
     public float AttackDistance = 2.2f;
 
@@ -74,8 +73,10 @@ public class Monster : PlayStateListener, IDamageable
     private Vector3 _jumpEndPosition;
 
     private Coroutine _jumpCoroutine;
-    [SerializeField] private float _jumpDuration = 0.6f;
+    [SerializeField] private float _jumpDuration = 0.9f;
     [SerializeField] private float _jumpHeight = 4f;
+
+    private static readonly int HashSpeed = Animator.StringToHash("Speed");
 
 
     private void Awake()
@@ -88,7 +89,15 @@ public class Monster : PlayStateListener, IDamageable
         _agent.speed = MoveSpeed;
         _agent.stoppingDistance = AttackDistance;
 
-        _spawnPosition = transform.position;
+        if (NavMesh.SamplePosition(transform.position, out var hit, 2f, NavMesh.AllAreas))
+        {
+            _spawnPosition = hit.position;
+        }
+        else
+        {
+            _spawnPosition = transform.position;
+        }
+
         if (_player != null)
         {
             _playerStats = _player.GetComponent<PlayerStats>();
@@ -130,6 +139,26 @@ public class Monster : PlayStateListener, IDamageable
         }
     }
 
+    private void LateUpdate()
+    {
+        if (!IsPlaying) return;
+        UpdateMoveBlend();
+    }
+
+    private void UpdateMoveBlend()
+    {
+        if (_animator == null || _agent == null) return;
+
+        float currentSpeed = _agent.velocity.magnitude;
+
+        float normalized = (MoveSpeed <= 0f) ? 0f : Mathf.Clamp01(currentSpeed / MoveSpeed);
+
+        if (State == EMonsterState.Attack || State == EMonsterState.Hit || State == EMonsterState.Death) normalized = 0f;
+
+        _animator.SetFloat(HashSpeed, normalized, 0.1f, Time.deltaTime);
+    }
+
+
     // 1. 함수는 한 가지 일만 잘해야 한다.
     // 2. 상태별 행동을 함수로 만든다.
     private void Idle()
@@ -140,7 +169,6 @@ public class Monster : PlayStateListener, IDamageable
         if (Vector3.Distance(transform.position, _player.transform.position) <= DetectDistance)
         {
             State = EMonsterState.Trace;
-            _animator.SetTrigger("IdleToTrace");
             Debug.Log("상태 전환: Idle -> Trace");
         }
 
@@ -170,7 +198,6 @@ public class Monster : PlayStateListener, IDamageable
         if (distance <= AttackDistance)
         {
             State = EMonsterState.Attack;
-            _animator.SetTrigger("TraceToAttackIdle");
         }
         else if (distance > ComebackDistance)
         {
@@ -183,6 +210,8 @@ public class Monster : PlayStateListener, IDamageable
             OffMeshLinkData linkData = _agent.currentOffMeshLinkData;
             _jumpStartPosition = linkData.startPos;
             _jumpEndPosition = linkData.endPos;
+
+            _animator.SetTrigger("TraceToJump");
 
             if (NavMesh.SamplePosition(_jumpEndPosition, out var hit, 1.0f, NavMesh.AllAreas))
             {
@@ -244,8 +273,8 @@ public class Monster : PlayStateListener, IDamageable
 
         if (distance < ComebackPosition)
         {
-            State = EMonsterState.Idle;
             Debug.Log("상태 전환: Comeback → Idle");
+            State = EMonsterState.Idle;
             return;
         }
 
@@ -272,13 +301,14 @@ public class Monster : PlayStateListener, IDamageable
         if (distance > AttackDistance)
         {
             State = EMonsterState.Trace;
-            _animator.SetTrigger("AttackIdleToTrace");
             return;
         }
 
         AttackTimer += Time.deltaTime;
         if (AttackTimer >= AttackSpeed)
         {
+            _animator.SetTrigger("Attack");
+
             if (_playerStats != null)
             {
                 _playerStats.TryTakeDamage(Damage);
@@ -343,11 +373,13 @@ public class Monster : PlayStateListener, IDamageable
         {
             State = EMonsterState.Idle;
         }
+        StopCoroutine(Hit_Coroutine());
     }
 
     private IEnumerator Death_Coroutine()
     {
         // Todo.Death 애니메이션 실행
+        _animator.SetTrigger("Death");
 
         _agent.isStopped = true;
 
@@ -362,16 +394,11 @@ public class Monster : PlayStateListener, IDamageable
     }
 
     private void Patrol()
-    {
+    { 
         if (_player != null)
-        {
+        { 
             float playerDistance = Vector3.Distance(transform.position, _player.transform.position);
-            if (playerDistance <= DetectDistance)
-            {
-                State = EMonsterState.Trace;
-                Debug.Log("상태 전환: Patrol -> Trace");
-                return;
-            }
+            if (playerDistance <= DetectDistance) { State = EMonsterState.Trace; Debug.Log("상태 전환: Patrol -> Trace"); return; }
         }
 
         if (_patrolPoints == null || _patrolPoints.Length == 0)
@@ -379,11 +406,10 @@ public class Monster : PlayStateListener, IDamageable
             State = EMonsterState.Idle;
             return;
         }
-
+        
         Transform targetPoint = _patrolPoints[_currentPatrolIndex];
         _agent.SetDestination(targetPoint.position);
         float distance = Vector3.Distance(transform.position, targetPoint.position);
-
         if (distance <= _patrolArriveDistance)
         {
             _patrolWaitTimer += Time.deltaTime;
@@ -394,7 +420,6 @@ public class Monster : PlayStateListener, IDamageable
                 {
                     _currentPatrolIndex = 0;
                 }
-
                 _patrolWaitTimer = 0f;
             }
         }

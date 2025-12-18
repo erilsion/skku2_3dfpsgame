@@ -3,12 +3,14 @@
 // 마우스를 조작하면 카메라를 그 방향으로 회전시키는 스크립트
 public class CameraRotate : PlayStateListener
 {
-    public float RotationSpeed = 200f;  // 초당 200도 회전
+    public float RotationSpeed = 300f;  // 초당 300도 회전
 
     // 게임 시작하면 y축이 0도에서 시작 -> 아래로 살짝 쳐다보면 -1도 -> 유니티는 359도로 인식 -> y축 최대 회전 각도 때문에 90도로 튐
     // 유니티는 0~360각도 체계이므로 우리가 따로 저장할 -360~360 체계로 누적할 변수
     private float _accumulationX = 0f;
     private float _accumulationY = 0f;
+
+    public float Yaw => _accumulationX;
 
 
     private void Update()

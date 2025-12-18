@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class PlayerBombFire : PlayStateListener
 {
@@ -9,13 +10,25 @@ public class PlayerBombFire : PlayStateListener
 
     [Header("던질 힘")]
     [SerializeField] private float _throwPower = 15f;
+    [SerializeField] private float _throwUp = 3.2f;
+    [SerializeField] private float _throwTorque = 30f;
+    [SerializeField] private float _throwTime = 1.4f;
 
+    private bool _isThrowing = false;
+
+    private Animator _animator;
+
+
+    private void Awake()
+    {
+        _animator = GetComponentInChildren<Animator>();
+    }
 
     private void Update()
     {
         if (!IsPlaying) return;
 
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetKeyDown(KeyCode.E))
         {
             if (BombManager.Instance.CurrentBombCount >= BombManager.Instance.MaxBombCount)
             {
@@ -23,11 +36,29 @@ public class PlayerBombFire : PlayStateListener
                 return;
             }
 
-            GameObject bomb = BombPool.Instance.SpawnBomb(_fireTransform.position, Quaternion.identity);
-            BombManager.Instance.AddBomb();
-            Rigidbody rigidbody = bomb.GetComponent<Rigidbody>();
-
-            rigidbody.AddForce(Camera.main.transform.forward * _throwPower, ForceMode.Impulse);
+            if (_isThrowing == false)
+            {
+                StartCoroutine(ThrowBomb_Coroutine());
+            }
         }
+    }
+
+    private IEnumerator ThrowBomb_Coroutine()
+    {
+        _isThrowing = true;
+
+        _animator.SetTrigger("Bomb");
+        yield return new WaitForSeconds(_throwTime);
+
+        GameObject bomb = BombPool.Instance.SpawnBomb(_fireTransform.position, Quaternion.identity);
+        BombManager.Instance.AddBomb();
+        Rigidbody rigidbody = bomb.GetComponent<Rigidbody>();
+
+        rigidbody.AddForce(Camera.main.transform.forward * _throwPower, ForceMode.Impulse);
+        rigidbody.AddForce(transform.up * _throwUp, ForceMode.Impulse);
+        rigidbody.AddTorque(Random.insideUnitSphere * _throwTorque);
+
+        _isThrowing = false;
+        StopCoroutine(ThrowBomb_Coroutine());
     }
 }
