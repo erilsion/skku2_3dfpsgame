@@ -26,7 +26,7 @@ public class PlayerBombFire : PlayStateListener
     {
         if (!IsPlaying) return;
 
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetKeyDown(KeyCode.E))
         {
             if (BombManager.Instance.CurrentBombCount >= BombManager.Instance.MaxBombCount)
             {

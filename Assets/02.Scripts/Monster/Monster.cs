@@ -68,10 +68,6 @@ public class Monster : PlayStateListener, IDamageable
     private float _patrolArriveDistance = 0.1f;
     private float _idleToPatrolDelay = 2f;
     private float _idleTimer = 0f;
-    private float _patrolRadius = 1f;
-    [SerializeField] private Transform _patrolCenter;
-    private Vector3 _currentPatrolTarget;
-    private bool _hasPatrolTarget = false;
 
     private Vector3 _jumpStartPosition;
     private Vector3 _jumpEndPosition;
@@ -177,15 +173,11 @@ public class Monster : PlayStateListener, IDamageable
         }
 
         _idleTimer += Time.deltaTime;
-        if (_idleTimer >= _idleToPatrolDelay)
+        if (_idleTimer >= _idleToPatrolDelay && _patrolPoints != null && _patrolPoints.Length > 0)
         {
             State = EMonsterState.Patrol;
-            Debug.Log("상태 전환: Idle -> Trace");
+            Debug.Log("상태 전환: Idle -> Patrol");
             _idleTimer = 0f;
-
-            _hasPatrolTarget = false;
-            _patrolWaitTimer = 0f;
-            _agent.ResetPath();
         }
     }
 
@@ -402,54 +394,34 @@ public class Monster : PlayStateListener, IDamageable
     }
 
     private void Patrol()
-    {
+    { 
         if (_player != null)
-        {
+        { 
             float playerDistance = Vector3.Distance(transform.position, _player.transform.position);
-            if (playerDistance <= DetectDistance)
-            {
-                State = EMonsterState.Trace;
-                Debug.Log("상태 전환: Patrol -> Trace");
-                return;
-            }
+            if (playerDistance <= DetectDistance) { State = EMonsterState.Trace; Debug.Log("상태 전환: Patrol -> Trace"); return; }
         }
 
-        if (!_hasPatrolTarget)
+        if (_patrolPoints == null || _patrolPoints.Length == 0)
         {
-            _currentPatrolTarget = GetRandomPatrolPoint();
-            _agent.stoppingDistance = 0f;
-            _agent.SetDestination(_currentPatrolTarget);
-            _hasPatrolTarget = true;
-            _patrolWaitTimer = 0f;
+            State = EMonsterState.Idle;
             return;
         }
-
-        if (!_agent.pathPending &&
-            _agent.remainingDistance <= Mathf.Max(_patrolArriveDistance, _agent.stoppingDistance + 0.05f))
+        
+        Transform targetPoint = _patrolPoints[_currentPatrolIndex];
+        _agent.SetDestination(targetPoint.position);
+        float distance = Vector3.Distance(transform.position, targetPoint.position);
+        if (distance <= _patrolArriveDistance)
         {
             _patrolWaitTimer += Time.deltaTime;
-
             if (_patrolWaitTimer >= _patrolWaitTime)
             {
-                _hasPatrolTarget = false;
-                _agent.ResetPath();
+                _currentPatrolIndex++;
+                if (_currentPatrolIndex >= _patrolPoints.Length)
+                {
+                    _currentPatrolIndex = 0;
+                }
+                _patrolWaitTimer = 0f;
             }
         }
-    }
-
-    private Vector3 GetRandomPatrolPoint()
-    {
-        Vector3 center = (_patrolCenter != null) ? _patrolCenter.position : _spawnPosition;
-
-        for (int i = 0; i < 8; i++)
-        {
-            Vector2 r = Random.insideUnitCircle * _patrolRadius;
-            Vector3 candidate = center + new Vector3(r.x, 0f, r.y);
-
-            if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
-                return hit.position;
-        }
-
-        return center;
     }
 }
