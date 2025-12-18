@@ -1581,6 +1581,12 @@ MonoBehaviour:
   _uiReloadBar: {fileID: 1710252187}
   _maxBullet: 30
   _damage: 10
+  _tracer: {fileID: 397518669}
+  _maxRange: 80
+  _tracerTravelTime: 0.06
+  _tracerStayTime: 0.02
+  _tracerTailTime: 0.02
+  _startOffset: 0.1
 --- !u!195 &397518668
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1611,7 +1617,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 397518654}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
