@@ -12,6 +12,8 @@ public class PlayerBombFire : PlayStateListener
     [SerializeField] private float _throwPower = 15f;
     [SerializeField] private float _throwTime = 1.4f;
 
+    private bool _isThrowing = false;
+
     private Animator _animator;
 
 
@@ -31,12 +33,18 @@ public class PlayerBombFire : PlayStateListener
                 Debug.Log("폭탄 최대 개수 도달!");
                 return;
             }
-            StartCoroutine(ThrowBomb_Coroutine());
+
+            if (_isThrowing == false)
+            {
+                StartCoroutine(ThrowBomb_Coroutine());
+            }
         }
     }
 
     private IEnumerator ThrowBomb_Coroutine()
     {
+        _isThrowing = true;
+
         _animator.SetTrigger("Bomb");
         yield return new WaitForSeconds(_throwTime);
 
@@ -46,6 +54,7 @@ public class PlayerBombFire : PlayStateListener
 
         rigidbody.AddForce(Camera.main.transform.forward * _throwPower, ForceMode.Impulse);
 
+        _isThrowing = false;
         StopCoroutine(ThrowBomb_Coroutine());
     }
 }
