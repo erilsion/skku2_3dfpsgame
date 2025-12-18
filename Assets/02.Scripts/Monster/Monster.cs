@@ -180,7 +180,7 @@ public class Monster : PlayStateListener, IDamageable
         if (_idleTimer >= _idleToPatrolDelay)
         {
             State = EMonsterState.Patrol;
-            Debug.Log("상태 전환: Idle -> Patrol");
+            Debug.Log("상태 전환: Idle -> Trace");
             _idleTimer = 0f;
 
             _hasPatrolTarget = false;
