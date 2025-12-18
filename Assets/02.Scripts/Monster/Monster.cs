@@ -281,6 +281,8 @@ public class Monster : PlayStateListener, IDamageable
         AttackTimer += Time.deltaTime;
         if (AttackTimer >= AttackSpeed)
         {
+            _animator.SetTrigger("Attack");
+
             if (_playerStats != null)
             {
                 _playerStats.TryTakeDamage(Damage);
