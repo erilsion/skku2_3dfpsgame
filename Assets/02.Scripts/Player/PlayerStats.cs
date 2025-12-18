@@ -20,6 +20,8 @@ public class PlayerStats : MonoBehaviour
     public ValueStat RunSpeed;
     public ValueStat JumpPower;
 
+    private Animator _animator;
+
     public event System.Action<float, float> OnHealthChanged;
 
     // 스태미나, 체력 스탯 관련 코드 (회복, 소모, 업그레이드...)
@@ -28,6 +30,7 @@ public class PlayerStats : MonoBehaviour
     {
         Health.Initialize();
         Stamina.Initialize();
+        _animator = GetComponentInChildren<Animator>();
     }
 
     private void Update()
@@ -52,8 +55,8 @@ public class PlayerStats : MonoBehaviour
 
         if (depletedNow)
         {
+            _animator.SetTrigger("Death");
             GameManager.Instance.GameOver();
-            Destroy(gameObject);
         }
 
         return true;
