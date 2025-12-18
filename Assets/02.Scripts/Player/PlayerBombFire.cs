@@ -10,6 +10,8 @@ public class PlayerBombFire : PlayStateListener
 
     [Header("던질 힘")]
     [SerializeField] private float _throwPower = 15f;
+    [SerializeField] private float _throwUp = 3.2f;
+    [SerializeField] private float _throwTorque = 30f;
     [SerializeField] private float _throwTime = 1.4f;
 
     private bool _isThrowing = false;
@@ -53,6 +55,8 @@ public class PlayerBombFire : PlayStateListener
         Rigidbody rigidbody = bomb.GetComponent<Rigidbody>();
 
         rigidbody.AddForce(Camera.main.transform.forward * _throwPower, ForceMode.Impulse);
+        rigidbody.AddForce(transform.up * _throwUp, ForceMode.Impulse);
+        rigidbody.AddTorque(Random.insideUnitSphere * _throwTorque);
 
         _isThrowing = false;
         StopCoroutine(ThrowBomb_Coroutine());
