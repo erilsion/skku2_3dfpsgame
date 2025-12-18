@@ -86,17 +86,6 @@ public class PlayerGunFire : PlayStateListener
         }
     }
 
-    private IEnumerator MuzzleEffect_Coroutine()
-    {
-        GameObject muzzleEffect = _muzzleEffects[Random.Range(0, _muzzleEffects.Count)];
-
-        muzzleEffect.SetActive(true);
-
-        yield return new WaitForSeconds(_shootTime);
-
-        muzzleEffect.SetActive(false);
-    }
-
     private void Shoot()
     {
         if (_currentBullet <= 0) return;
@@ -124,16 +113,16 @@ public class PlayerGunFire : PlayStateListener
             // 2. 하나를 캐싱해두고 Play    -> 인스펙터 설정 그대로 그릴 경우. 한 화면에 한번만 그릴 경우. 단점: 재실행이므로 기존 게 삭제
             // 3. 하나를 캐싱해두고 Emit    -> 인스펙터 설정을 수정한 후 그릴 경우. 한 화면에 위치만 수정 후 여러 개 그릴 경우
 
-            _hitEffect.transform.position = hitInfo.point;
-            _hitEffect.transform.forward = hitInfo.normal;
-
-            _hitEffect.Play();
-
             // ParticleSystem.EmitParams emitParams = new ParticleSystem.EmitParams();
             // emitParams.position = hitInfo.point;
             // emitParams.rotation3D = Quaternion.LookRotation(hitInfo.normal).eulerAngles;
 
             // _hitEffect.Emit(emitParams, 1);    커스텀할 정보, 분출 횟수
+
+            _hitEffect.transform.position = hitInfo.point;
+            _hitEffect.transform.forward = hitInfo.normal;
+
+            _hitEffect.Play();
 
             if (hitInfo.collider.TryGetComponent<IDamageable>(out var damageable))
             {
@@ -142,6 +131,17 @@ public class PlayerGunFire : PlayStateListener
 
             _fireTimer = 0f;
         }
+    }
+
+    private IEnumerator MuzzleEffect_Coroutine()
+    {
+        GameObject muzzleEffect = _muzzleEffects[Random.Range(0, _muzzleEffects.Count)];
+
+        muzzleEffect.SetActive(true);
+
+        yield return new WaitForSeconds(_shootTime);
+
+        muzzleEffect.SetActive(false);
     }
 
     private void ReloadFinish()
