@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class PlayerBombFire : PlayStateListener
 {
@@ -9,7 +10,15 @@ public class PlayerBombFire : PlayStateListener
 
     [Header("던질 힘")]
     [SerializeField] private float _throwPower = 15f;
+    [SerializeField] private float _throwTime = 1.4f;
 
+    private Animator _animator;
+
+
+    private void Awake()
+    {
+        _animator = GetComponentInChildren<Animator>();
+    }
 
     private void Update()
     {
@@ -22,12 +31,21 @@ public class PlayerBombFire : PlayStateListener
                 Debug.Log("폭탄 최대 개수 도달!");
                 return;
             }
-
-            GameObject bomb = BombPool.Instance.SpawnBomb(_fireTransform.position, Quaternion.identity);
-            BombManager.Instance.AddBomb();
-            Rigidbody rigidbody = bomb.GetComponent<Rigidbody>();
-
-            rigidbody.AddForce(Camera.main.transform.forward * _throwPower, ForceMode.Impulse);
+            StartCoroutine(ThrowBomb_Coroutine());
         }
+    }
+
+    private IEnumerator ThrowBomb_Coroutine()
+    {
+        _animator.SetTrigger("Bomb");
+        yield return new WaitForSeconds(_throwTime);
+
+        GameObject bomb = BombPool.Instance.SpawnBomb(_fireTransform.position, Quaternion.identity);
+        BombManager.Instance.AddBomb();
+        Rigidbody rigidbody = bomb.GetComponent<Rigidbody>();
+
+        rigidbody.AddForce(Camera.main.transform.forward * _throwPower, ForceMode.Impulse);
+
+        StopCoroutine(ThrowBomb_Coroutine());
     }
 }
