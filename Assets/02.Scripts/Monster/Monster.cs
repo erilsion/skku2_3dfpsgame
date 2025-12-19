@@ -30,7 +30,7 @@ public class Monster : PlayStateListener, IDamageable
     [Header("기본 상태")]
     public EMonsterState State = EMonsterState.Idle;
 
-    [Header("컴포넌트 옵션")]
+    [Header("NavMesh 에이전트")]
     [SerializeField] private NavMeshAgent _agent;
 
     private Vector3 _spawnPosition;
