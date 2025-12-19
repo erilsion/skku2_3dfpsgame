@@ -326,6 +326,11 @@ public class Monster : PlayStateListener, IDamageable
             return false;
         }
 
+        // 데미지를 받으면 데미지를 받은 위치에 혈흔 이펙트를 생성한다.
+        // 그 이펙트는 몬스터를 따라다녀야 한다.
+
+
+
         Health.Decrease(damage);
         _knockbackDirection = (transform.position - _player.transform.position).normalized;
 

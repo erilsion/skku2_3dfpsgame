@@ -169,6 +169,10 @@ public class PlayerGunFire : PlayStateListener
                 _hitEffect.Play();
             }
 
+            // Damage damage = new Damage();
+            // damage.Value = _damage;
+            // damage.HitPoint = hitInfo.point;
+
             if (hitInfo.collider.TryGetComponent<IDamageable>(out var damageable))
             {
                 damageable.TryTakeDamage(_damage);
