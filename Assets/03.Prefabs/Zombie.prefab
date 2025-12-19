@@ -471,6 +471,7 @@ MonoBehaviour:
   _patrolWaitTime: 3
   _jumpDuration: 0.9
   _jumpHeight: 4
+  _bloodEffectPrefab: {fileID: 1000013355911406, guid: d32aa916f50cac94db11e6f19821a58f, type: 3}
 --- !u!195 &7677239024383471136
 NavMeshAgent:
   m_ObjectHideFlags: 0
