@@ -14,7 +14,7 @@ public class Bomb : MonoBehaviour
     [SerializeField] private LayerMask _damageLayerMask;
 
     [Header("데미지")]
-    [SerializeField] private int _damage = 40;
+    [SerializeField] private float _damage = 40;
 
     private void Awake()
     {
@@ -45,11 +45,16 @@ public class Bomb : MonoBehaviour
 
         // OverlapSphere: 가상의 구를 만들어서, 그 구 영역 안에 있는 모든 콜라이더를 찾아서 배열로 반환한다.
         Collider[] hits = Physics.OverlapSphere(transform.position, _explosionRadius, _damageLayerMask);
+        Damage damage = new Damage()
+        {
+            Value = _damage,
+            HitPoint = transform.position
+        };
         foreach (var hit in hits)
         {
             if (hit.TryGetComponent<IDamageable>(out var damageable))
             {
-                damageable.TryTakeDamage(_damage);
+                damageable.TryTakeDamage(damage);
             }
         }
 

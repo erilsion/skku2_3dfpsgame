@@ -30,7 +30,7 @@ public class PlayerGunFire : PlayStateListener
     private int _reserveBullet = 150;
 
     [Header("데미지")]
-    [SerializeField] private int _damage = 10;
+    [SerializeField] private float _damage = 10;
 
     private Animator _animator;
 
@@ -169,13 +169,16 @@ public class PlayerGunFire : PlayStateListener
                 _hitEffect.Play();
             }
 
-            // Damage damage = new Damage();
-            // damage.Value = _damage;
-            // damage.HitPoint = hitInfo.point;
+            Damage damage = new Damage()
+            {
+                Value = _damage,
+                HitPoint = hitInfo.point,
+                Normal = hitInfo.normal
+            };
 
             if (hitInfo.collider.TryGetComponent<IDamageable>(out var damageable))
             {
-                damageable.TryTakeDamage(_damage);
+                damageable.TryTakeDamage(damage);
             }
         }
 

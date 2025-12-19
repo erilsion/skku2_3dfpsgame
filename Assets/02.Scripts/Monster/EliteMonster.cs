@@ -153,6 +153,12 @@ public class EliteMonster : PlayStateListener, IDamageable
 
             if (_playerStats != null)
             {
+                Damage damage = new Damage()
+                {
+                    Value = Damage,
+                    HitPoint = transform.position
+                };
+
                 _playerStats.TryTakeDamage(Damage);
                 Debug.Log("플레이어 공격!");
             }
@@ -161,14 +167,14 @@ public class EliteMonster : PlayStateListener, IDamageable
         }
     }
 
-    public bool TryTakeDamage(float damage)
+    public bool TryTakeDamage(Damage damage)
     {
         if (State == EEliteMonsterState.Hit || State == EEliteMonsterState.Death)
         {
             return false;
         }
 
-        Health.Decrease(damage);
+        Health.Decrease(damage.Value);
         _knockbackDirection = (transform.position - _player.transform.position).normalized;
 
         if (Health.Value > 0f)

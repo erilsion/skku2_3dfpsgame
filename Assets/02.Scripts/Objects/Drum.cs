@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -10,7 +11,7 @@ public class Drum : MonoBehaviour, IDamageable
     [SerializeField] private ConsumableStat _health;
 
     [Header("공격력")]
-    [SerializeField] private int _damage = 100;
+    [SerializeField] private float _damage = 100;
 
     [Header("폭발 프리팹")]
     [SerializeField] private GameObject _explosionEffectPrefab;
@@ -36,19 +37,6 @@ public class Drum : MonoBehaviour, IDamageable
         _health.Initialize();
     }
 
-    public bool TryTakeDamage(float damage)
-    {
-        if (_hasExploded) return false;
-
-        bool depletedNow = _health.ApplyDamage(damage);
-
-        if (depletedNow)
-        {
-            Explode();
-        }
-
-        return true;
-    }
 
     private void Explode()
     {
@@ -67,9 +55,29 @@ public class Drum : MonoBehaviour, IDamageable
         {
             if (hit.TryGetComponent<IDamageable>(out var damageable))
             {
-                damageable.TryTakeDamage(_damage);
+                Damage damage = new Damage()
+                {
+                    Value = _damage,
+                    HitPoint = transform.position
+                };
+                damageable.TryTakeDamage(damage);
             }
         }
         Destroy(gameObject, _destroyTime);
+    }
+
+    public bool TryTakeDamage(Damage damage)
+    {
+        if (_hasExploded) return false;
+
+
+        bool depletedNow = _health.ApplyDamage(damage.Value);
+
+        if (depletedNow)
+        {
+            Explode();
+        }
+
+        return true;
     }
 }
