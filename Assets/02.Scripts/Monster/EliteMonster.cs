@@ -45,6 +45,9 @@ public class EliteMonster : PlayStateListener, IDamageable
     private float _rageDoubleRate = 2f;
     private bool _isRaged = false;
 
+    private static readonly int HashSpeed = Animator.StringToHash("Speed");
+
+
     private void Awake()
     {
         if (_animator == null)
@@ -86,6 +89,25 @@ public class EliteMonster : PlayStateListener, IDamageable
                 Jump();
                 break;
         }
+    }
+
+    private void LateUpdate()
+    {
+        if (!IsPlaying) return;
+        UpdateMoveBlend();
+    }
+
+    private void UpdateMoveBlend()
+    {
+        if (_animator == null || _agent == null) return;
+
+        float currentSpeed = _agent.velocity.magnitude;
+
+        float normalized = (MoveSpeed <= 0f) ? 0f : Mathf.Clamp01(currentSpeed / MoveSpeed);
+
+        if (State == EEliteMonsterState.Attack || State == EEliteMonsterState.Hit || State == EEliteMonsterState.Death) normalized = 0f;
+
+        _animator.SetFloat(HashSpeed, normalized, 0.1f, Time.deltaTime);
     }
 
     private void Idle()
