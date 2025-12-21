@@ -24,7 +24,7 @@ public class EliteMonster : PlayStateListener, IDamageable
     public float AttackSpeed = 3f;
     public float AttackTimer = 0f;
 
-    public float DetectDistance = 16f;
+    public float DetectDistance = 20f;
     public float ComebackDistance = 36f;
     public float ComebackPosition = 0.1f;
     public float AttackDistance = 5f;
@@ -45,7 +45,14 @@ public class EliteMonster : PlayStateListener, IDamageable
     [Header("분노 관련")]
     [SerializeField] private float _rageRate = 1.5f;
     [SerializeField] private bool _isRaged = false;
-    [SerializeField] private float _rageTime = 3.2f;
+    [SerializeField] private float _rageTime = 2.2f;
+    [SerializeField] private Color _normalColor = Color.white;
+    [SerializeField] private Color _rageColor = Color.red;
+    [SerializeField] private float _rageColorDuration = 0.6f;
+
+    private Renderer[] _renderers;
+    private MaterialPropertyBlock _mpb;
+    private Coroutine _rageColorCoroutine;
 
     private float _doubleRate = 2f;
     private float _halfRate = 0.5f;
@@ -68,6 +75,9 @@ public class EliteMonster : PlayStateListener, IDamageable
             _playerStats = _player.GetComponent<PlayerStats>();
             _playerTransform = _player.transform;
         }
+
+        _renderers = GetComponentsInChildren<Renderer>();
+        _mpb = new MaterialPropertyBlock();
 
         _isRaged = false;
     }
@@ -200,11 +210,12 @@ public class EliteMonster : PlayStateListener, IDamageable
 
     public bool TryTakeDamage(Damage damage)
     {
-        if (Health.Value <= Health.MaxValue * _halfRate && _isRaged == false)
+        float nextHp = Health.Value - damage.Value;
+
+        if (!_isRaged && nextHp <= Health.MaxValue * _halfRate)
         {
             Health.Decrease(damage.Value);
             _knockbackDirection = (transform.position - _player.transform.position).normalized;
-
             EnterRage();
             return true;
         }
@@ -325,10 +336,18 @@ public class EliteMonster : PlayStateListener, IDamageable
     {
         _isRaged = true;
         State = EEliteMonsterState.Rage;
-        Debug.Log("상태 전환: 어떤 상태 -> Rage");
 
         _agent.isStopped = true;
         _agent.ResetPath();
+
+        if (_rageColorCoroutine != null)
+        {
+            StopCoroutine(_rageColorCoroutine);
+        }
+
+        _rageColorCoroutine = StartCoroutine(
+            LerpColor_Coroutine(_normalColor, _rageColor, _rageColorDuration)
+        );
 
         StartCoroutine(Rage_Coroutine());
     }
@@ -346,10 +365,35 @@ public class EliteMonster : PlayStateListener, IDamageable
         MoveSpeed *= _doubleRate;
         _agent.speed = MoveSpeed;
         AttackSpeed *= _halfRate;
+        DetectDistance *= _rageRate;
 
         yield return new WaitForSeconds(_rageTime);
 
         _agent.isStopped = false;
         State = EEliteMonsterState.Trace;
+    }
+
+    private void ApplyColor(Color color)
+    {
+        foreach (var renderer in _renderers)
+        {
+            renderer.GetPropertyBlock(_mpb);
+            _mpb.SetColor("_BaseColor", color);
+            renderer.SetPropertyBlock(_mpb);
+        }
+    }
+
+    private IEnumerator LerpColor_Coroutine(Color from, Color to, float duration)
+    {
+        float time = 0f;
+
+        while (time < 1f)
+        {
+            time += Time.deltaTime / duration;
+            ApplyColor(Color.Lerp(from, to, time));
+            yield return null;
+        }
+
+        ApplyColor(to);
     }
 }

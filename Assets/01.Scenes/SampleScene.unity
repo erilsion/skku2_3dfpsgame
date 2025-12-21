@@ -5028,7 +5028,10 @@ MonoBehaviour:
   _jumpHeight: 4
   _rageRate: 1.5
   _isRaged: 0
-  _rageTime: 3.2
+  _rageTime: 2.2
+  _normalColor: {r: 1, g: 1, b: 1, a: 1}
+  _rageColor: {r: 1, g: 0, b: 0, a: 1}
+  _rageColorDuration: 0.6
 --- !u!114 &1605755496
 MonoBehaviour:
   m_ObjectHideFlags: 0
