@@ -30,7 +30,7 @@ public class PlayerGunFire : PlayStateListener
     private int _reserveBullet = 150;
 
     [Header("데미지")]
-    [SerializeField] private int _damage = 10;
+    [SerializeField] private float _damage = 10;
 
     private Animator _animator;
 
@@ -52,6 +52,13 @@ public class PlayerGunFire : PlayStateListener
     [Header("카메라 상태(선택)")]
     [SerializeField] private CameraFollow _cameraFollow;
 
+    private EZoomMode _zoomMode = EZoomMode.Normal;
+    [SerializeField] private GameObject _normalCrosshair;
+    [SerializeField] private GameObject _zoomInCrosshair;
+    [SerializeField] private float _normalView = 60f;
+    [SerializeField] private float _zoomInView = 10f;
+
+
     private void Awake()
     {
         _currentBullet = _maxBullet;
@@ -67,6 +74,8 @@ public class PlayerGunFire : PlayStateListener
     private void Update()
     {
         if (!IsPlaying) return;
+
+        ZoomModeCheck();
 
         _fireTimer += Time.deltaTime;
 
@@ -101,6 +110,24 @@ public class PlayerGunFire : PlayStateListener
         if (Input.GetMouseButton(0))
         {
             if (Shoot()) StartCoroutine(MuzzleEffect_Coroutine());
+        }
+    }
+
+    private void ZoomModeCheck()
+    {
+        if (Input.GetMouseButton(1))
+        {
+            _zoomMode = EZoomMode.ZoomIn;
+            _normalCrosshair.SetActive(false);
+            _zoomInCrosshair.SetActive(true);
+            Camera.main.fieldOfView = _zoomInView;
+        }
+        else
+        {
+            _zoomMode = EZoomMode.Normal;
+            _zoomInCrosshair.SetActive(false);
+            _normalCrosshair.SetActive(true);
+            Camera.main.fieldOfView = _normalView;
         }
     }
 
@@ -142,9 +169,16 @@ public class PlayerGunFire : PlayStateListener
                 _hitEffect.Play();
             }
 
+            Damage damage = new Damage()
+            {
+                Value = _damage,
+                HitPoint = hitInfo.point,
+                Normal = hitInfo.normal
+            };
+
             if (hitInfo.collider.TryGetComponent<IDamageable>(out var damageable))
             {
-                damageable.TryTakeDamage(_damage);
+                damageable.TryTakeDamage(damage);
             }
         }
 

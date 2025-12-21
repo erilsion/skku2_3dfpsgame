@@ -471,6 +471,7 @@ MonoBehaviour:
   _patrolWaitTime: 3
   _jumpDuration: 0.9
   _jumpHeight: 4
+  _bloodEffectPrefab: {fileID: 1000013355911406, guid: d32aa916f50cac94db11e6f19821a58f, type: 3}
 --- !u!195 &7677239024383471136
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -481,7 +482,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: -334000983
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -528,6 +529,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc405be1183048f4599ba4005ea79e5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _monster: {fileID: 5063958351441852894}
   _healthBarTransform: {fileID: 3226783895790840795}
   _gaugeImage: {fileID: 6373903386859678510}
   _mainCamera: {fileID: 0}

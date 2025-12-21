@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -30,7 +31,7 @@ public class Monster : PlayStateListener, IDamageable
     [Header("기본 상태")]
     public EMonsterState State = EMonsterState.Idle;
 
-    [Header("컴포넌트 옵션")]
+    [Header("NavMesh 에이전트")]
     [SerializeField] private NavMeshAgent _agent;
 
     private Vector3 _spawnPosition;
@@ -75,6 +76,8 @@ public class Monster : PlayStateListener, IDamageable
     private Coroutine _jumpCoroutine;
     [SerializeField] private float _jumpDuration = 0.9f;
     [SerializeField] private float _jumpHeight = 4f;
+
+    [SerializeField] private GameObject _bloodEffectPrefab;
 
     private static readonly int HashSpeed = Animator.StringToHash("Speed");
 
@@ -311,7 +314,13 @@ public class Monster : PlayStateListener, IDamageable
 
             if (_playerStats != null)
             {
-                _playerStats.TryTakeDamage(Damage);
+                Damage damage = new Damage()
+                {
+                    Value = Damage,
+                    HitPoint = transform.position
+                };
+
+                _playerStats.TryTakeDamage(damage.Value);
                 Debug.Log("플레이어 공격!");
             }
 
@@ -319,14 +328,19 @@ public class Monster : PlayStateListener, IDamageable
         }
     }
 
-    public bool TryTakeDamage(float damage)
+    public bool TryTakeDamage(Damage damage)
     {
         if (State == EMonsterState.Hit || State == EMonsterState.Death)
         {
             return false;
         }
 
-        Health.Decrease(damage);
+        // 데미지를 받으면 데미지를 받은 위치에 혈흔 이펙트를 생성한다.
+        // 그 이펙트는 몬스터를 따라다녀야 한다.
+        GameObject bloodEffect = Instantiate(_bloodEffectPrefab, _player.transform.position, transform.rotation, transform);
+        bloodEffect.transform.forward = damage.Normal;
+
+        Health.Decrease(damage.Value);
         _knockbackDirection = (transform.position - _player.transform.position).normalized;
 
         if (Health.Value > 0f)
