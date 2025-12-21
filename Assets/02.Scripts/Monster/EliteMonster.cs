@@ -24,10 +24,10 @@ public class EliteMonster : PlayStateListener, IDamageable
     public float AttackSpeed = 3f;
     public float AttackTimer = 0f;
 
-    public float DetectDistance = 12f;
-    public float ComebackDistance = 16f;
+    public float DetectDistance = 16f;
+    public float ComebackDistance = 36f;
     public float ComebackPosition = 0.1f;
-    public float AttackDistance = 3f;
+    public float AttackDistance = 5f;
 
     public float KnockbackForce = 1f;
     public float KnockbackDuration = 0.4f;
@@ -35,15 +35,20 @@ public class EliteMonster : PlayStateListener, IDamageable
     public float DeathDuration = 2f;
     private Vector3 _knockbackDirection;
 
+    [Header("점프 관련")]
     private Vector3 _jumpStartPosition;
     private Vector3 _jumpEndPosition;
     private Coroutine _jumpCoroutine;
     [SerializeField] private float _jumpDuration = 0.9f;
     [SerializeField] private float _jumpHeight = 4f;
 
-    private float _rageRate = 1.5f;
-    private float _rageDoubleRate = 2f;
-    private bool _isRaged = false;
+    [Header("분노 관련")]
+    [SerializeField] private float _rageRate = 1.5f;
+    [SerializeField] private bool _isRaged = false;
+    [SerializeField] private float _rageTime = 3.2f;
+
+    private float _doubleRate = 2f;
+    private float _halfRate = 0.5f;
 
     private static readonly int HashSpeed = Animator.StringToHash("Speed");
 
@@ -87,6 +92,10 @@ public class EliteMonster : PlayStateListener, IDamageable
 
             case EEliteMonsterState.Jump:
                 Jump();
+                break;
+
+            case EEliteMonsterState.Rage:
+                Rage();
                 break;
         }
     }
@@ -191,7 +200,16 @@ public class EliteMonster : PlayStateListener, IDamageable
 
     public bool TryTakeDamage(Damage damage)
     {
-        if (State == EEliteMonsterState.Hit || State == EEliteMonsterState.Death)
+        if (Health.Value <= Health.MaxValue * _halfRate && _isRaged == false)
+        {
+            Health.Decrease(damage.Value);
+            _knockbackDirection = (transform.position - _player.transform.position).normalized;
+
+            EnterRage();
+            return true;
+        }
+
+        if (State == EEliteMonsterState.Hit || State == EEliteMonsterState.Death || State == EEliteMonsterState.Rage)
         {
             return false;
         }
@@ -204,12 +222,6 @@ public class EliteMonster : PlayStateListener, IDamageable
             State = EEliteMonsterState.Hit;
             Debug.Log("상태 전환: 어떤 상태 -> Hit");
             StartCoroutine(Hit_Coroutine());
-        }
-        else if (Health.Value <= Health.MaxValue && _isRaged == false)
-        {
-            State = EEliteMonsterState.Rage;
-            Debug.Log("상태 전환: 어떤 상태 -> Death");
-            StartCoroutine(Rage_Coroutine());
         }
         else
         {
@@ -248,7 +260,6 @@ public class EliteMonster : PlayStateListener, IDamageable
         {
             State = EEliteMonsterState.Idle;
         }
-        StopCoroutine(Hit_Coroutine());
     }
 
     private IEnumerator Death_Coroutine()
@@ -310,16 +321,35 @@ public class EliteMonster : PlayStateListener, IDamageable
         State = EEliteMonsterState.Trace;
     }
 
-    private IEnumerator Rage_Coroutine()
+    private void EnterRage()
     {
         _isRaged = true;
-        Damage = Damage * _rageRate;
-        MoveSpeed = MoveSpeed * _rageDoubleRate;
-        DetectDistance = DetectDistance * _rageDoubleRate;
-        ComebackDistance = ComebackDistance * _rageDoubleRate;
+        State = EEliteMonsterState.Rage;
+        Debug.Log("상태 전환: 어떤 상태 -> Rage");
 
+        _agent.isStopped = true;
+        _agent.ResetPath();
+
+        StartCoroutine(Rage_Coroutine());
+    }
+
+    private void Rage()
+    {
+        // Rage 연출 중: 이동/공격 불가
+    }
+
+    private IEnumerator Rage_Coroutine()
+    {
+        _animator.SetTrigger("Rage");
+
+        Damage *= _rageRate;
+        MoveSpeed *= _doubleRate;
+        _agent.speed = MoveSpeed;
+        AttackSpeed *= _halfRate;
+
+        yield return new WaitForSeconds(_rageTime);
+
+        _agent.isStopped = false;
         State = EEliteMonsterState.Trace;
-
-        yield return null;
     }
 }

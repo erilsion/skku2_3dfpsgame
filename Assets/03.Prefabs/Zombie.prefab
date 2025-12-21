@@ -529,6 +529,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc405be1183048f4599ba4005ea79e5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _monster: {fileID: 5063958351441852894}
   _healthBarTransform: {fileID: 3226783895790840795}
   _gaugeImage: {fileID: 6373903386859678510}
   _mainCamera: {fileID: 0}
