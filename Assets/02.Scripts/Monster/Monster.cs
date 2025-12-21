@@ -411,14 +411,11 @@ public class Monster : PlayStateListener, IDamageable
         Destroy(gameObject, DeathDuration);
     }
 
-    void DropCoins()
+    public void DropCoins()
     {
         for (int i = 0; i < _coinAmount; i++)
         {
-            GameObject coin = CoinPool.Instance.GetFromPool(
-                transform.position,
-                Quaternion.identity
-            );
+            GameObject coin = CoinPool.Instance.GetFromPool(transform.position,Quaternion.identity);
 
             Rigidbody rigidbody = coin.GetComponent<Rigidbody>();
             if (rigidbody != null)

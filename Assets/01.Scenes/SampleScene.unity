@@ -301,7 +301,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _prefab: {fileID: 1950871307682000, guid: 01348926c7cbb3347a006c37204131c3, type: 3}
-  _initialSize: 120
+  _initialSize: 80
 --- !u!1 &47000493
 GameObject:
   m_ObjectHideFlags: 0
@@ -7681,7 +7681,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8853672944335115423, guid: ad4d05e3ccb401a4aa71e56d16f35879, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

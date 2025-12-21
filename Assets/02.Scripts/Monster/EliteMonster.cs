@@ -42,6 +42,9 @@ public class EliteMonster : PlayStateListener, IDamageable
     [SerializeField] private float _jumpDuration = 0.9f;
     [SerializeField] private float _jumpHeight = 4f;
 
+    private int _coinAmount = 50;
+    private float _dropForce = 8f;
+
     [Header("분노 관련")]
     [SerializeField] private float _rageRate = 1.5f;
     [SerializeField] private bool _isRaged = false;
@@ -286,7 +289,24 @@ public class EliteMonster : PlayStateListener, IDamageable
             timer += Time.deltaTime;
             yield return null;
         }
+        DropCoins();
         Destroy(gameObject, DeathDuration);
+    }
+
+    public void DropCoins()
+    {
+        for (int i = 0; i < _coinAmount; i++)
+        {
+            GameObject coin = CoinPool.Instance.GetFromPool(transform.position,Quaternion.identity);
+
+            Rigidbody rigidbody = coin.GetComponent<Rigidbody>();
+            if (rigidbody != null)
+            {
+                Vector3 direction = new Vector3(Random.Range(-1f, 1f), 1f, Random.Range(-1f, 1f)).normalized;
+
+                rigidbody.AddForce(direction * _dropForce, ForceMode.Impulse);
+            }
+        }
     }
 
     private void Jump()
