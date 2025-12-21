@@ -24,6 +24,7 @@ public class Coin : MonoBehaviour
         {
             _rigidbody.linearVelocity = Vector3.zero;
             _rigidbody.angularVelocity = Vector3.zero;
+            _rigidbody.isKinematic = false;
         }
     }
 
