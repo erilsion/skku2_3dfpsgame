@@ -31,6 +31,7 @@ public class Coin : MonoBehaviour
     public void StartAttract(Transform player)
     {
         if (_isAttracting) return;
+        if (_rigidbody == null) return;
 
         _isAttracting = true;
         _target = player;
