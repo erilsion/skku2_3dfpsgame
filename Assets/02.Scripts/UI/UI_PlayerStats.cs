@@ -48,6 +48,7 @@ public class UI_PlayerStats : MonoBehaviour
         }
     }
 
+    // 체력에 변화 있으면 발동
     private void OnEnable()
     {
         if (_stats != null) _stats.OnHealthChanged += UpdateHealthUI;

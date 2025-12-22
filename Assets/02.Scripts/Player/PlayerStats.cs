@@ -24,8 +24,6 @@ public class PlayerStats : MonoBehaviour
 
     public event System.Action<float, float> OnHealthChanged;
 
-    // 스태미나, 체력 스탯 관련 코드 (회복, 소모, 업그레이드...)
-
     private void Start()
     {
         Health.Initialize();
@@ -34,6 +32,11 @@ public class PlayerStats : MonoBehaviour
     }
 
     private void Update()
+    {
+        Refresh();
+    }
+
+    private void Refresh()
     {
         float deltaTime = Time.deltaTime;
         Regenerated(deltaTime);
