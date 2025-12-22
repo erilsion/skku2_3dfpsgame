@@ -297,7 +297,7 @@ public class EliteMonster : PlayStateListener, IDamageable
     {
         for (int i = 0; i < _coinAmount; i++)
         {
-            GameObject coin = CoinPool.Instance.GetFromPool(transform.position, Quaternion.identity);
+            GameObject coin = GoldPool.Instance.GetFromPool(transform.position, Quaternion.identity);
 
             Rigidbody rigidbody = coin.GetComponent<Rigidbody>();
             if (rigidbody != null)

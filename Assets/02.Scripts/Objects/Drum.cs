@@ -18,7 +18,7 @@ public class Drum : MonoBehaviour, IDamageable
 
     [Header("폭발 옵션")]
     private bool _hasExploded = false;
-    [SerializeField] private float _explosionRadius = 8f;
+    [SerializeField] private float _explosionRadius = 10f;
     [SerializeField] private LayerMask _damageLayerMask;
     [SerializeField] private float _destroyTime = 5f;
     public event Action<Drum> OnExploded;

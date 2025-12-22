@@ -12,7 +12,7 @@ public class PlayerBombFire : PlayStateListener
     [SerializeField] private float _throwPower = 15f;
     [SerializeField] private float _throwUp = 3.2f;
     [SerializeField] private float _throwTorque = 30f;
-    [SerializeField] private float _throwTime = 1.4f;
+    [SerializeField] private float _throwTime = 1.5f;
 
     private bool _isThrowing = false;
 

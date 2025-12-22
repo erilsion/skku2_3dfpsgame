@@ -297,11 +297,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 28943090}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b63d681cfe297634aa8a315ccf594950, type: 3}
+  m_Script: {fileID: 11500000, guid: 0f8d255b59b2b3649915778dc3cfcdfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _prefab: {fileID: 1950871307682000, guid: 1fae63e5637d62648b5bc9a66af60417, type: 3}
-  _initialSize: 80
+  _initialSize: 100
 --- !u!1 &47000493
 GameObject:
   m_ObjectHideFlags: 0
@@ -1630,7 +1630,7 @@ MonoBehaviour:
   _throwPower: 15
   _throwUp: 3.2
   _throwTorque: 30
-  _throwTime: 1.4
+  _throwTime: 1.5
 --- !u!114 &397518667
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1834,6 +1834,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71369af8750ffad4fab413ad52242d2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _player: {fileID: 397518658}
 --- !u!135 &397518672
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1853,7 +1854,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 8
+  m_Radius: 10
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &410087039
 GameObject:

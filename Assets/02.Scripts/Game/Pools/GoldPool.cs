@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-public class CoinPool : PoolBase
+public class GoldPool : PoolBase
 {
-    public static CoinPool Instance { get; private set; }
+    public static GoldPool Instance { get; private set; }
 
     protected override void Awake()
     {
