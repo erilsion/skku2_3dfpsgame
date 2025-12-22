@@ -1240,7 +1240,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.24
+  near clip plane: 0.23
   far clip plane: 1000
   field of view: 60
   orthographic: 0
@@ -1269,7 +1269,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: 0, y: 1.6, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1854,7 +1854,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 10
+  m_Radius: 8
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &410087039
 GameObject:
@@ -3758,7 +3758,7 @@ Transform:
   m_GameObject: {fileID: 1186628031}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.52, z: 0}
+  m_LocalPosition: {x: 0, y: 0.58, z: 0}
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5218,10 +5218,8 @@ MonoBehaviour:
   MoveSpeed: 4
   AttackSpeed: 2.6
   AttackTimer: 0
-  DetectDistance: 16
-  ComebackDistance: 36
-  ComebackPosition: 0.1
-  AttackDistance: 5
+  DetectDistance: 20
+  AttackDistance: 6
   KnockbackForce: 1
   KnockbackDuration: 0.4
   HitDuration: 1.2

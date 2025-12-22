@@ -79,8 +79,8 @@ public class Monster : PlayStateListener, IDamageable
 
     [SerializeField] private GameObject _bloodEffectPrefab;
 
-    private int _coinAmount = 10;
-    private float _dropForce = 6f;
+    private int _coinAmount = 20;
+    private float _dropForce = 0.01f;
 
     private static readonly int HashSpeed = Animator.StringToHash("Speed");
 
