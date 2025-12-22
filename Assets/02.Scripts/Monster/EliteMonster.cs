@@ -21,13 +21,11 @@ public class EliteMonster : PlayStateListener, IDamageable
     public ConsumableStat Health;
 
     public float MoveSpeed = 4f;
-    public float AttackSpeed = 3f;
+    public float AttackSpeed = 2.6f;
     public float AttackTimer = 0f;
 
     public float DetectDistance = 20f;
-    public float ComebackDistance = 36f;
-    public float ComebackPosition = 0.1f;
-    public float AttackDistance = 5f;
+    public float AttackDistance = 6f;
 
     public float KnockbackForce = 1f;
     public float KnockbackDuration = 0.4f;
@@ -42,8 +40,8 @@ public class EliteMonster : PlayStateListener, IDamageable
     [SerializeField] private float _jumpDuration = 0.9f;
     [SerializeField] private float _jumpHeight = 4f;
 
-    private int _coinAmount = 50;
-    private float _dropForce = 8f;
+    private int _coinAmount = 60;
+    private float _dropForce = 0.05f;
 
     [Header("분노 관련")]
     [SerializeField] private float _rageRate = 1.5f;
@@ -297,7 +295,7 @@ public class EliteMonster : PlayStateListener, IDamageable
     {
         for (int i = 0; i < _coinAmount; i++)
         {
-            GameObject coin = CoinPool.Instance.GetFromPool(transform.position, Quaternion.identity);
+            GameObject coin = GoldPool.Instance.GetFromPool(transform.position, Quaternion.identity);
 
             Rigidbody rigidbody = coin.GetComponent<Rigidbody>();
             if (rigidbody != null)
@@ -329,12 +327,12 @@ public class EliteMonster : PlayStateListener, IDamageable
             t += Time.deltaTime / _jumpDuration;
             float clampedT = Mathf.Clamp01(t);
 
-            Vector3 pos = Vector3.Lerp(start, end, clampedT);
+            Vector3 position = Vector3.Lerp(start, end, clampedT);
 
             float height = Mathf.Sin(clampedT * Mathf.PI) * _jumpHeight;
-            pos.y += height;
+            position.y += height;
 
-            transform.position = pos;
+            transform.position = position;
 
             yield return null;
         }
@@ -386,21 +384,12 @@ public class EliteMonster : PlayStateListener, IDamageable
         _agent.speed = MoveSpeed;
         AttackSpeed *= _halfRate;
         DetectDistance *= _rageRate;
+        HitDuration *= _halfRate;
 
         yield return new WaitForSeconds(_rageTime);
 
         _agent.isStopped = false;
         State = EEliteMonsterState.Trace;
-    }
-
-    private void ApplyColor(Color color)
-    {
-        foreach (var renderer in _renderers)
-        {
-            renderer.GetPropertyBlock(_mpb);
-            _mpb.SetColor("_BaseColor", color);
-            renderer.SetPropertyBlock(_mpb);
-        }
     }
 
     private IEnumerator LerpColor_Coroutine(Color from, Color to, float duration)
@@ -415,5 +404,15 @@ public class EliteMonster : PlayStateListener, IDamageable
         }
 
         ApplyColor(to);
+    }
+
+    private void ApplyColor(Color color)
+    {
+        foreach (var renderer in _renderers)
+        {
+            renderer.GetPropertyBlock(_mpb);
+            _mpb.SetColor("_BaseColor", color);
+            renderer.SetPropertyBlock(_mpb);
+        }
     }
 }

@@ -297,11 +297,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 28943090}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b63d681cfe297634aa8a315ccf594950, type: 3}
+  m_Script: {fileID: 11500000, guid: 0f8d255b59b2b3649915778dc3cfcdfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _prefab: {fileID: 1950871307682000, guid: 1fae63e5637d62648b5bc9a66af60417, type: 3}
-  _initialSize: 80
+  _initialSize: 100
 --- !u!1 &47000493
 GameObject:
   m_ObjectHideFlags: 0
@@ -1240,7 +1240,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.24
+  near clip plane: 0.23
   far clip plane: 1000
   field of view: 60
   orthographic: 0
@@ -1269,7 +1269,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: 0, y: 1.6, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1630,7 +1630,7 @@ MonoBehaviour:
   _throwPower: 15
   _throwUp: 3.2
   _throwTorque: 30
-  _throwTime: 1.4
+  _throwTime: 1.5
 --- !u!114 &397518667
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1834,6 +1834,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71369af8750ffad4fab413ad52242d2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _player: {fileID: 397518658}
 --- !u!135 &397518672
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -3757,7 +3758,7 @@ Transform:
   m_GameObject: {fileID: 1186628031}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.52, z: 0}
+  m_LocalPosition: {x: 0, y: 0.58, z: 0}
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5217,10 +5218,8 @@ MonoBehaviour:
   MoveSpeed: 4
   AttackSpeed: 2.6
   AttackTimer: 0
-  DetectDistance: 16
-  ComebackDistance: 36
-  ComebackPosition: 0.1
-  AttackDistance: 5
+  DetectDistance: 20
+  AttackDistance: 6
   KnockbackForce: 1
   KnockbackDuration: 0.4
   HitDuration: 1.2
