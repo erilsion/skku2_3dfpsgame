@@ -161,7 +161,7 @@ public class EliteMonster : PlayStateListener, IDamageable
             _jumpStartPosition = linkData.startPos;
             _jumpEndPosition = linkData.endPos;
 
-            _animator.SetTrigger("TraceToJump");
+            _animator.SetTrigger("Jump");
 
             if (NavMesh.SamplePosition(_jumpEndPosition, out var hit, 1.0f, NavMesh.AllAreas))
             {
