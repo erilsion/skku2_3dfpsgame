@@ -41,7 +41,7 @@ public class EliteMonster : PlayStateListener, IDamageable
     [SerializeField] private float _jumpHeight = 4f;
 
     private int _coinAmount = 60;
-    private float _dropForce = 0.05f;
+    private float _dropForce = 0.04f;
 
     [Header("분노 관련")]
     [SerializeField] private float _rageRate = 1.5f;
