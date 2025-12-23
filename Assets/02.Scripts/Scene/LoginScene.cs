@@ -31,6 +31,7 @@ public class LoginScene : MonoBehaviour
     private void Start()
     {
         AddButtonEvents();
+        LoadLastLoginID();
         Refresh();
     }
 
@@ -86,6 +87,9 @@ public class LoginScene : MonoBehaviour
             return;
         }
 
+        PlayerPrefs.SetString("LastLoginID", id);
+        PlayerPrefs.Save();
+
         // 4. 있다면 씬 이동
         // 동기 -> 유저가 대기하도록 한다.
         SceneManager.LoadScene(1);
@@ -139,4 +143,16 @@ public class LoginScene : MonoBehaviour
         Refresh();
     }
 
+    private void LoadLastLoginID()
+    {
+        if (PlayerPrefs.HasKey("LastLoginID"))
+        {
+            _idInputField.text = PlayerPrefs.GetString("LastLoginID");
+            _passwordInputField.text = string.Empty;
+        }
+        else
+        {
+            _idInputField.text = string.Empty;
+        }
+    }
 }
