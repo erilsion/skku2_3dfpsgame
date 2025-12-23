@@ -31,16 +31,15 @@ public class PlayerStats : MonoBehaviour
         Refresh();
     }
 
-    // 리프레시
     private void Refresh()
     {
         float deltaTime = Time.deltaTime;
-        Regenerated(deltaTime);
+        HealthRegenerate(deltaTime);
         Stamina.Regenerate(deltaTime);
     }
 
     // 체력 닳아있으면 자동 회복
-    private void Regenerated(float time)
+    private void HealthRegenerate(float time)
     {
         if (Health.Value >= Health.MaxValue) return;
         Health.Regenerate(time);
@@ -62,7 +61,6 @@ public class PlayerStats : MonoBehaviour
         return true;
     }
 
-    // 체력 변화 체크
     private void UpdateHealth()
     {
         OnHealthChanged?.Invoke(Health.Value, Health.MaxValue);
