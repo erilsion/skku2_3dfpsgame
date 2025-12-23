@@ -104,7 +104,7 @@ public class GameManager : MonoBehaviour
     {
         // 씬 재시작
         Time.timeScale = 1;
-        SceneManager.LoadScene("LoadingScene");
+        SceneManager.LoadScene(1);
     }
 
     public void Quit()

@@ -88,7 +88,7 @@ public class LoginScene : MonoBehaviour
 
         // 4. 있다면 씬 이동
         // 동기 -> 유저가 대기하도록 한다.
-        SceneManager.LoadScene("LoadingScene");
+        SceneManager.LoadScene(1);
     }
 
     private void Register()

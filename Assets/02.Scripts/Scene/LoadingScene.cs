@@ -22,7 +22,7 @@ public class LoadingScene : MonoBehaviour
     {
         // 비동기 -> 유저가 다른 일을 하는 동안 불러온다.
         // 씬 로드 상황에 대한 데이터를 가지고 있는 객체를 반환한다.
-        AsyncOperation ao = SceneManager.LoadSceneAsync("SampleScene");
+        AsyncOperation ao = SceneManager.LoadSceneAsync(0);
 
         // 로드되는 씬의 모습이 화면에 안 보이게 한다.
         ao.allowSceneActivation = false;

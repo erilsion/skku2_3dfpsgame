@@ -2066,7 +2066,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Cruel War
+  m_Text: Good Luck
 --- !u!222 &1659847975
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2228,7 +2228,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uD68C\uC6D0 \uAC00\uC785\uC774 \uC644\uB8CC\uB418\uC5C8\uC2B5\uB2C8\uB2E4."
+  m_text: "\uD658\uC601\uD569\uB2C8\uB2E4."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 64dffd08335b07941b54fa9204741cc4, type: 2}
   m_sharedMaterial: {fileID: -1314887752755817754, guid: 64dffd08335b07941b54fa9204741cc4, type: 2}
