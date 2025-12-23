@@ -48,6 +48,7 @@ public class UI_PlayerStats : MonoBehaviour
         }
     }
 
+    // 체력에 변화 있으면 발동
     private void OnEnable()
     {
         if (_stats != null) _stats.OnHealthChanged += UpdateHealthUI;
@@ -58,13 +59,12 @@ public class UI_PlayerStats : MonoBehaviour
         if (_stats != null) _stats.OnHealthChanged -= UpdateHealthUI;
     }
 
+    // UI 갱신
     private void UpdateHealthUI(float currentValue, float maxValue)
     {
         if (_stats == null)
         {
-            StopHitScreen();
-            StopBackRoutine();
-            SetHealth(0f);
+            StopPlaying();
             return;
         }
 
@@ -93,21 +93,29 @@ public class UI_PlayerStats : MonoBehaviour
         }
     }
 
+    // 플레이어 사망 시 연출 종료
+    private void StopPlaying()
+    {
+        StopHitScreen();
+        StopBackRoutine();
+        SetHealth(0f);
+    }
+
+    // 체력 설정 (플레이어 사망 시 UI를 0으로 표기용)
+    private void SetHealth(float value01)
+    {
+        if (_healthFrontSlider != null) _healthFrontSlider.value = value01;
+        if (_healthBackSlider != null) _healthBackSlider.value = value01;
+    }
+
+    // 플레이어 히트 시 히트스크린 생성 판정
     private void TryPlayHitScreen()
     {
         if (_hitScreenRoutine != null) return;
         _hitScreenRoutine = StartCoroutine(HitScreen_Coroutine());
     }
 
-    private void StopHitScreen()
-    {
-        if (_hitScreenRoutine != null)
-        {
-            StopCoroutine(_hitScreenRoutine);
-            _hitScreenRoutine = null;
-        }
-    }
-
+    // 히트스크린 띄우는 코루틴
     private IEnumerator HitScreen_Coroutine()
     {
         _hitScreenImage.gameObject.SetActive(true);
@@ -117,6 +125,17 @@ public class UI_PlayerStats : MonoBehaviour
         _hitScreenRoutine = null;
     }
 
+    // 히트스크린 멈추기 (사망 시)
+    private void StopHitScreen()
+    {
+        if (_hitScreenRoutine != null)
+        {
+            StopCoroutine(_hitScreenRoutine);
+            _hitScreenRoutine = null;
+        }
+    }
+
+    // 플레이어 히트 시 체력바 딜레이 연출용
     private IEnumerator BackBarFollow_Coroutine()
     {
         _healthFrontSliderFill.color = Color.white;
@@ -144,6 +163,7 @@ public class UI_PlayerStats : MonoBehaviour
         _backRoutine = null;
     }
 
+    // 체력바 딜레이 연출 중지 (사망 시)
     private void StopBackRoutine()
     {
         if (_backRoutine != null)
@@ -153,17 +173,13 @@ public class UI_PlayerStats : MonoBehaviour
         }
     }
 
-    private void SetHealth(float value01)
-    {
-        if (_healthFrontSlider != null) _healthFrontSlider.value = value01;
-        if (_healthBackSlider != null) _healthBackSlider.value = value01;
-    }
-
+    // 체력바 딜레이 시 먼저 줄어드는 게이지바 정보 참조용
     private float GetHealth01()
     {
         return GaugeChanged(_stats.Health.Value, _stats.Health.MaxValue);
     }
 
+    // 체력 혹은 스태미너 변화 시 UI 게이지바 변화
     private float GaugeChanged(float value, float max)
     {
         if (max <= 0f) return 0f;
