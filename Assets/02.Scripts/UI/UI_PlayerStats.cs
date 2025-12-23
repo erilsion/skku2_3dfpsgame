@@ -44,11 +44,10 @@ public class UI_PlayerStats : MonoBehaviour
     {
         if (_staminaSlider != null)
         {
-            _staminaSlider.value = GaugeChanged(_stats.Stamina.Value, _stats.Stamina.MaxValue);
+            _staminaSlider.value = CalculateGaugeRatio(_stats.Stamina.Value, _stats.Stamina.MaxValue);
         }
     }
 
-    // 체력에 변화 있으면 발동
     private void OnEnable()
     {
         if (_stats != null) _stats.OnHealthChanged += UpdateHealthUI;
@@ -59,7 +58,6 @@ public class UI_PlayerStats : MonoBehaviour
         if (_stats != null) _stats.OnHealthChanged -= UpdateHealthUI;
     }
 
-    // UI 갱신
     private void UpdateHealthUI(float currentValue, float maxValue)
     {
         if (_stats == null)
@@ -68,7 +66,7 @@ public class UI_PlayerStats : MonoBehaviour
             return;
         }
 
-        float target = GaugeChanged(currentValue, maxValue);
+        float target = CalculateGaugeRatio(currentValue, maxValue);
 
         if (target < _lastHealth01)
         {
@@ -93,7 +91,6 @@ public class UI_PlayerStats : MonoBehaviour
         }
     }
 
-    // 플레이어 사망 시 연출 종료
     private void StopPlaying()
     {
         StopHitScreen();
@@ -108,14 +105,12 @@ public class UI_PlayerStats : MonoBehaviour
         if (_healthBackSlider != null) _healthBackSlider.value = value01;
     }
 
-    // 플레이어 히트 시 히트스크린 생성 판정
     private void TryPlayHitScreen()
     {
         if (_hitScreenRoutine != null) return;
         _hitScreenRoutine = StartCoroutine(HitScreen_Coroutine());
     }
 
-    // 히트스크린 띄우는 코루틴
     private IEnumerator HitScreen_Coroutine()
     {
         _hitScreenImage.gameObject.SetActive(true);
@@ -125,7 +120,6 @@ public class UI_PlayerStats : MonoBehaviour
         _hitScreenRoutine = null;
     }
 
-    // 히트스크린 멈추기 (사망 시)
     private void StopHitScreen()
     {
         if (_hitScreenRoutine != null)
@@ -151,7 +145,7 @@ public class UI_PlayerStats : MonoBehaviour
             if (GameManager.Instance.State == EGameState.GameOver || _stats == null)
                 yield break;
 
-            float target = GetHealth01();
+            float target = GetHealthRatio();
 
             if (target >= _healthBackSlider.value)
                 break;
@@ -173,14 +167,12 @@ public class UI_PlayerStats : MonoBehaviour
         }
     }
 
-    // 체력바 딜레이 시 먼저 줄어드는 게이지바 정보 참조용
-    private float GetHealth01()
+    private float GetHealthRatio()
     {
-        return GaugeChanged(_stats.Health.Value, _stats.Health.MaxValue);
+        return CalculateGaugeRatio(_stats.Health.Value, _stats.Health.MaxValue);
     }
 
-    // 체력 혹은 스태미너 변화 시 UI 게이지바 변화
-    private float GaugeChanged(float value, float max)
+    private float CalculateGaugeRatio(float value, float max)
     {
         if (max <= 0f) return 0f;
         return Mathf.Clamp01(value / max);
