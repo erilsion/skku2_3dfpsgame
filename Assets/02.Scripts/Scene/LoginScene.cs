@@ -59,7 +59,7 @@ public class LoginScene : MonoBehaviour
         string id = _idInputField.text;
         if (string.IsNullOrEmpty(id))
         {
-            _messageTextUI.text = "아이디를 입력해주세요.";
+            _messageTextUI.text = "아이디 또는 비밀번호가 틀렸습니다. 확인해주세요.";
             return;
         }
 
@@ -67,7 +67,7 @@ public class LoginScene : MonoBehaviour
         string password = _passwordInputField.text;
         if (string.IsNullOrEmpty(password))
         {
-            _messageTextUI.text = "패스워드를 입력해주세요.";
+            _messageTextUI.text = "아이디 또는 비밀번호가 틀렸습니다. 확인해주세요.";
             return;
         }
 
@@ -75,19 +75,20 @@ public class LoginScene : MonoBehaviour
         // 3-1. 아이디가 있는지 확인한다.
         if (!PlayerPrefs.HasKey(id))
         {
-            _messageTextUI.text = "아이디를 확인해주세요.";
+            _messageTextUI.text = "아이디 또는 비밀번호가 틀렸습니다. 확인해주세요.";
             return;
         }
 
         string myPassword = PlayerPrefs.GetString(id);
         if (myPassword != password)
         {
-            _messageTextUI.text = "비밀번호를 확인해주세요.";
+            _messageTextUI.text = "아이디 또는 비밀번호가 틀렸습니다. 확인해주세요.";
             return;
         }
 
         // 4. 있다면 씬 이동
-        SceneManager.LoadScene("SampleScene");
+        // 동기 -> 유저가 대기하도록 한다.
+        SceneManager.LoadScene("LoadingScene");
     }
 
     private void Register()
@@ -110,7 +111,7 @@ public class LoginScene : MonoBehaviour
         string password2 = _passwordInputField.text;
         if (string.IsNullOrEmpty(password2) || password != password2)
         {
-            _messageTextUI.text = "패스워드를 확인해주세요.";
+            _messageTextUI.text = "패스워드를 다시 확인해주세요.";
             return;
         }
 
