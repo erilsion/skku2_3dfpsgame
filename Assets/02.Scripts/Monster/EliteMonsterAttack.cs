@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 
-public class MonsterAttack : MonoBehaviour
+public class EliteMonsterAttack : MonoBehaviour
 {
     [Header("몬스터 관련 옵션")]
-    [SerializeField] private Monster _monster;
+    [SerializeField] private EliteMonster _eliteMonster;
 
     [Header("플레이어 관련 옵션")]
     [SerializeField] private GameObject _player;
@@ -11,7 +11,7 @@ public class MonsterAttack : MonoBehaviour
 
     private void Awake()
     {
-        _monster = GetComponentInParent<Monster>();
+        _eliteMonster = GetComponentInParent<EliteMonster>();
         _playerStats = _player.GetComponent<PlayerStats>();
     }
 
@@ -24,7 +24,7 @@ public class MonsterAttack : MonoBehaviour
         {
             Damage damage = new Damage()
             {
-                Value = _monster.Damage,
+                Value = _eliteMonster.Damage,
                 HitPoint = transform.position
             };
 
