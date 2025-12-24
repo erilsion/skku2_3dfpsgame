@@ -79,7 +79,9 @@ public class Monster : PlayStateListener, IDamageable
     [SerializeField] private GameObject _bloodEffectPrefab;
 
     private int _goldAmount = 20;
-    private float _dropForce = 0.02f;
+    private float _dropForce = 0.2f;
+
+    private float _half = 0.5f;
 
     private static readonly int HashSpeed = Animator.StringToHash("Speed");
 
@@ -408,20 +410,24 @@ public class Monster : PlayStateListener, IDamageable
             timer += Time.deltaTime;
             yield return null;
         }
-        DropGolds();
+        DropGolds(transform);
         Destroy(gameObject, DeathDuration);
     }
 
-    public void DropGolds()
+    public void DropGolds(Transform monsterTransform)
     {
         for (int i = 0; i < _goldAmount; i++)
         {
-            GameObject gold = GoldPool.Instance.GetFromPool(transform.position,Quaternion.identity);
+            Vector3 randomOffset = new Vector3(Random.Range(-_half, _half), Random.Range(-_half, 1f), Random.Range(-_half, _half));
+
+            Vector3 dropPosition = monsterTransform.position + randomOffset;
+
+            GameObject gold = GoldPool.Instance.GetFromPool(dropPosition, Quaternion.identity);
 
             Rigidbody rigidbody = gold.GetComponent<Rigidbody>();
             if (rigidbody != null)
             {
-                Vector3 direction = new Vector3(Random.Range(-1f, 1f),1f,Random.Range(-1f, 1f)).normalized;
+                Vector3 direction = dropPosition.normalized;
 
                 rigidbody.AddForce(direction * _dropForce, ForceMode.Impulse);
             }
