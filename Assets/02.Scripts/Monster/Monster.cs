@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -79,8 +78,10 @@ public class Monster : PlayStateListener, IDamageable
 
     [SerializeField] private GameObject _bloodEffectPrefab;
 
-    private int _coinAmount = 20;
-    private float _dropForce = 0.02f;
+    private int _goldAmount = 20;
+    private float _dropForce = 0.2f;
+
+    private float _half = 0.5f;
 
     private static readonly int HashSpeed = Animator.StringToHash("Speed");
 
@@ -265,6 +266,7 @@ public class Monster : PlayStateListener, IDamageable
         _agent.Warp(end);
 
         _agent.updatePosition = true;
+        _agent.updateRotation = true;
         _agent.isStopped = false;
         _jumpCoroutine = null;
 
@@ -340,8 +342,9 @@ public class Monster : PlayStateListener, IDamageable
 
         // 데미지를 받으면 데미지를 받은 위치에 혈흔 이펙트를 생성한다.
         // 그 이펙트는 몬스터를 따라다녀야 한다.
-        GameObject bloodEffect = Instantiate(_bloodEffectPrefab, _player.transform.position, transform.rotation, transform);
+        GameObject bloodEffect = Instantiate(_bloodEffectPrefab, damage.HitPoint, transform.rotation, transform);
         bloodEffect.transform.forward = damage.Normal;
+
 
         Health.Decrease(damage.Value);
         _knockbackDirection = (transform.position - _player.transform.position).normalized;
@@ -407,20 +410,24 @@ public class Monster : PlayStateListener, IDamageable
             timer += Time.deltaTime;
             yield return null;
         }
-        DropCoins();
+        DropGolds(transform);
         Destroy(gameObject, DeathDuration);
     }
 
-    public void DropCoins()
+    public void DropGolds(Transform monsterTransform)
     {
-        for (int i = 0; i < _coinAmount; i++)
+        for (int i = 0; i < _goldAmount; i++)
         {
-            GameObject coin = GoldPool.Instance.GetFromPool(transform.position,Quaternion.identity);
+            Vector3 randomOffset = new Vector3(Random.Range(-_half, _half), Random.Range(-_half, 1f), Random.Range(-_half, _half));
 
-            Rigidbody rigidbody = coin.GetComponent<Rigidbody>();
+            Vector3 dropPosition = monsterTransform.position + randomOffset;
+
+            GameObject gold = GoldPool.Instance.GetFromPool(dropPosition, Quaternion.identity);
+
+            Rigidbody rigidbody = gold.GetComponent<Rigidbody>();
             if (rigidbody != null)
             {
-                Vector3 direction = new Vector3(Random.Range(-1f, 1f),1f,Random.Range(-1f, 1f)).normalized;
+                Vector3 direction = dropPosition.normalized;
 
                 rigidbody.AddForce(direction * _dropForce, ForceMode.Impulse);
             }

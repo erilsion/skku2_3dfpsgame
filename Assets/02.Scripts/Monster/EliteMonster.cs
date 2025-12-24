@@ -40,8 +40,8 @@ public class EliteMonster : PlayStateListener, IDamageable
     [SerializeField] private float _jumpDuration = 0.9f;
     [SerializeField] private float _jumpHeight = 4f;
 
-    private int _coinAmount = 60;
-    private float _dropForce = 0.04f;
+    private int _goldAmount = 60;
+    private float _dropForce = 0.5f;
 
     [Header("분노 관련")]
     [SerializeField] private float _rageRate = 1.5f;
@@ -55,10 +55,12 @@ public class EliteMonster : PlayStateListener, IDamageable
     private MaterialPropertyBlock _mpb;
     private Coroutine _rageColorCoroutine;
 
-    private float _doubleRate = 2f;
-    private float _halfRate = 0.5f;
+    private float _double = 2f;
+    private float _half = 0.5f;
 
     private static readonly int HashSpeed = Animator.StringToHash("Speed");
+
+    [SerializeField] private GameObject _bloodEffectPrefab;
 
 
     private void Awake()
@@ -213,7 +215,7 @@ public class EliteMonster : PlayStateListener, IDamageable
     {
         float nextHp = Health.Value - damage.Value;
 
-        if (!_isRaged && nextHp <= Health.MaxValue * _halfRate)
+        if (!_isRaged && nextHp <= Health.MaxValue * _half)
         {
             Health.Decrease(damage.Value);
             _knockbackDirection = (transform.position - _player.transform.position).normalized;
@@ -225,6 +227,9 @@ public class EliteMonster : PlayStateListener, IDamageable
         {
             return false;
         }
+
+        GameObject bloodEffect = Instantiate(_bloodEffectPrefab, damage.HitPoint, transform.rotation, transform);
+        bloodEffect.transform.forward = damage.Normal;
 
         Health.Decrease(damage.Value);
         _knockbackDirection = (transform.position - _player.transform.position).normalized;
@@ -287,20 +292,24 @@ public class EliteMonster : PlayStateListener, IDamageable
             timer += Time.deltaTime;
             yield return null;
         }
-        DropCoins();
+        DropGolds(transform);
         Destroy(gameObject, DeathDuration);
     }
 
-    public void DropCoins()
+    public void DropGolds(Transform monsterTransform)
     {
-        for (int i = 0; i < _coinAmount; i++)
+        for (int i = 0; i < _goldAmount; i++)
         {
-            GameObject coin = GoldPool.Instance.GetFromPool(transform.position, Quaternion.identity);
+            Vector3 randomOffset = new Vector3(Random.Range(-_half, _half), Random.Range(-_half, 1f), Random.Range(-_half, _half));
 
-            Rigidbody rigidbody = coin.GetComponent<Rigidbody>();
+            Vector3 dropPosition = monsterTransform.position + randomOffset;
+
+            GameObject gold = GoldPool.Instance.GetFromPool(dropPosition, Quaternion.identity);
+
+            Rigidbody rigidbody = gold.GetComponent<Rigidbody>();
             if (rigidbody != null)
             {
-                Vector3 direction = new Vector3(Random.Range(-1f, 1f), 1f, Random.Range(-1f, 1f)).normalized;
+                Vector3 direction = dropPosition.normalized;
 
                 rigidbody.AddForce(direction * _dropForce, ForceMode.Impulse);
             }
@@ -343,6 +352,7 @@ public class EliteMonster : PlayStateListener, IDamageable
         _agent.Warp(end);
 
         _agent.updatePosition = true;
+        _agent.updateRotation = true;
         _agent.isStopped = false;
         _jumpCoroutine = null;
 
@@ -380,11 +390,11 @@ public class EliteMonster : PlayStateListener, IDamageable
         _animator.SetTrigger("Rage");
 
         Damage *= _rageRate;
-        MoveSpeed *= _doubleRate;
+        MoveSpeed *= _double;
         _agent.speed = MoveSpeed;
-        AttackSpeed *= _halfRate;
+        AttackSpeed *= _half;
         DetectDistance *= _rageRate;
-        HitDuration *= _halfRate;
+        HitDuration *= _half;
 
         yield return new WaitForSeconds(_rageTime);
 
