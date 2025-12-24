@@ -41,7 +41,7 @@ public class EliteMonster : PlayStateListener, IDamageable
     [SerializeField] private float _jumpHeight = 4f;
 
     private int _coinAmount = 60;
-    private float _dropForce = 0.04f;
+    private float _dropForce = 0.02f;
 
     [Header("분노 관련")]
     [SerializeField] private float _rageRate = 1.5f;
@@ -59,6 +59,8 @@ public class EliteMonster : PlayStateListener, IDamageable
     private float _halfRate = 0.5f;
 
     private static readonly int HashSpeed = Animator.StringToHash("Speed");
+
+    [SerializeField] private GameObject _bloodEffectPrefab;
 
 
     private void Awake()
@@ -225,6 +227,9 @@ public class EliteMonster : PlayStateListener, IDamageable
         {
             return false;
         }
+
+        GameObject bloodEffect = Instantiate(_bloodEffectPrefab, damage.HitPoint, transform.rotation, transform);
+        bloodEffect.transform.forward = damage.Normal;
 
         Health.Decrease(damage.Value);
         _knockbackDirection = (transform.position - _player.transform.position).normalized;

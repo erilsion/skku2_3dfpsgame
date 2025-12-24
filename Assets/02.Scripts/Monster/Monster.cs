@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -340,8 +339,9 @@ public class Monster : PlayStateListener, IDamageable
 
         // 데미지를 받으면 데미지를 받은 위치에 혈흔 이펙트를 생성한다.
         // 그 이펙트는 몬스터를 따라다녀야 한다.
-        GameObject bloodEffect = Instantiate(_bloodEffectPrefab, _player.transform.position, transform.rotation, transform);
+        GameObject bloodEffect = Instantiate(_bloodEffectPrefab, damage.HitPoint, transform.rotation, transform);
         bloodEffect.transform.forward = damage.Normal;
+
 
         Health.Decrease(damage.Value);
         _knockbackDirection = (transform.position - _player.transform.position).normalized;

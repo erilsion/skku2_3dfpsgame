@@ -31,9 +31,9 @@ public class Gold : MonoBehaviour
 
         if (_rigidbody != null)
         {
+            _rigidbody.isKinematic = false;
             _rigidbody.linearVelocity = Vector3.zero;
             _rigidbody.angularVelocity = Vector3.zero;
-            _rigidbody.isKinematic = false;
         }
     }
 

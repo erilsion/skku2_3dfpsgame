@@ -6838,6 +6838,7 @@ MonoBehaviour:
   _normalColor: {r: 1, g: 1, b: 1, a: 1}
   _rageColor: {r: 1, g: 0, b: 0, a: 1}
   _rageColorDuration: 0.6
+  _bloodEffectPrefab: {fileID: 1000013355911406, guid: d857a44d35e7f884484c3c31c6ea7116, type: 3}
 --- !u!114 &1605755496
 MonoBehaviour:
   m_ObjectHideFlags: 0
