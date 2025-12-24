@@ -15,12 +15,15 @@ public class Gold : MonoBehaviour
     private Vector3 _controlPosition;
 
     private Rigidbody _rigidbody;
+    private Collider _collider;
     private Transform _target;
     private bool _isAttracting;
+
 
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
+        _collider = GetComponent<Collider>();
     }
 
     private void OnEnable()
@@ -34,6 +37,12 @@ public class Gold : MonoBehaviour
             _rigidbody.isKinematic = false;
             _rigidbody.linearVelocity = Vector3.zero;
             _rigidbody.angularVelocity = Vector3.zero;
+            _rigidbody.detectCollisions = true;
+        }
+
+        if (_collider != null)
+        {
+            _collider.enabled = true;
         }
     }
 
@@ -45,6 +54,12 @@ public class Gold : MonoBehaviour
 
         _isAttracting = true;
         _target = player;
+
+        if (_collider != null)
+        {
+            _collider.enabled = false;
+        }
+        _rigidbody.detectCollisions = false;
 
         _rigidbody.isKinematic = true;
 

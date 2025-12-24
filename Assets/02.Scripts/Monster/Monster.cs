@@ -78,7 +78,7 @@ public class Monster : PlayStateListener, IDamageable
 
     [SerializeField] private GameObject _bloodEffectPrefab;
 
-    private int _coinAmount = 20;
+    private int _goldAmount = 20;
     private float _dropForce = 0.02f;
 
     private static readonly int HashSpeed = Animator.StringToHash("Speed");
@@ -408,17 +408,17 @@ public class Monster : PlayStateListener, IDamageable
             timer += Time.deltaTime;
             yield return null;
         }
-        DropCoins();
+        DropGolds();
         Destroy(gameObject, DeathDuration);
     }
 
-    public void DropCoins()
+    public void DropGolds()
     {
-        for (int i = 0; i < _coinAmount; i++)
+        for (int i = 0; i < _goldAmount; i++)
         {
-            GameObject coin = GoldPool.Instance.GetFromPool(transform.position,Quaternion.identity);
+            GameObject gold = GoldPool.Instance.GetFromPool(transform.position,Quaternion.identity);
 
-            Rigidbody rigidbody = coin.GetComponent<Rigidbody>();
+            Rigidbody rigidbody = gold.GetComponent<Rigidbody>();
             if (rigidbody != null)
             {
                 Vector3 direction = new Vector3(Random.Range(-1f, 1f),1f,Random.Range(-1f, 1f)).normalized;
