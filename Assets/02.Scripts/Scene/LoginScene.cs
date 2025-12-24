@@ -89,8 +89,10 @@ public class LoginScene : MonoBehaviour
             return;
         }
 
-        string myPassword = PlayerPrefs.GetString(id);
-        if (myPassword != password)
+        string encrypted = PlayerPrefs.GetString(id);
+        string decryptedPassword = AESCrypto.Decrypt(encrypted);
+
+        if (decryptedPassword != password)
         {
             _messageTextUI.text = "아이디 또는 비밀번호가 틀렸습니다. 확인해주세요.";
             return;
@@ -145,7 +147,9 @@ public class LoginScene : MonoBehaviour
             return;
         }
 
-        PlayerPrefs.SetString(id, password);
+        string encryptedPassword = AESCrypto.Encrypt(password);
+        PlayerPrefs.SetString(id, encryptedPassword);
+        PlayerPrefs.Save();
 
         GotoLogin();
     }
