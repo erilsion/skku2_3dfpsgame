@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Text.RegularExpressions;
 
 public class LoginScene : MonoBehaviour
 {
@@ -28,9 +29,18 @@ public class LoginScene : MonoBehaviour
     [SerializeField] private TMP_InputField _passwordInputField;
     [SerializeField] private TMP_InputField _passwordConfirmInputField;
 
+    private const string EmailPattern = @"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$";
+
+    private const string PasswordPattern = @"^(?=.{7,20}$)(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':""\\|,.<>\/?])[A-Za-z\d!@#$%^&*()_+\-=\[\]{};':""\\|,.<>\/?]+$";
+
+    private bool _isValidEmail(string email) => Regex.IsMatch(email, EmailPattern);
+
+    private bool _isValidPassword(string pw) => Regex.IsMatch(pw, PasswordPattern);
+
     private void Start()
     {
         AddButtonEvents();
+        LoadLastLoginID();
         Refresh();
     }
 
@@ -79,12 +89,17 @@ public class LoginScene : MonoBehaviour
             return;
         }
 
-        string myPassword = PlayerPrefs.GetString(id);
-        if (myPassword != password)
+        string encrypted = PlayerPrefs.GetString(id);
+        string decryptedPassword = AESCrypto.Decrypt(encrypted);
+
+        if (decryptedPassword != password)
         {
             _messageTextUI.text = "아이디 또는 비밀번호가 틀렸습니다. 확인해주세요.";
             return;
         }
+
+        PlayerPrefs.SetString("LastLoginID", id);
+        PlayerPrefs.Save();
 
         // 4. 있다면 씬 이동
         // 동기 -> 유저가 대기하도록 한다.
@@ -99,6 +114,11 @@ public class LoginScene : MonoBehaviour
             _messageTextUI.text = "아이디를 입력해주세요.";
             return;
         }
+        if (!_isValidEmail(id))
+        {
+            _messageTextUI.text = "아이디는 이메일 형식이어야 합니다.";
+            return;
+        }
 
         string password = _passwordInputField.text;
         if (string.IsNullOrEmpty(password))
@@ -106,9 +126,14 @@ public class LoginScene : MonoBehaviour
             _messageTextUI.text = "패스워드를 입력해주세요.";
             return;
         }
+        if (!_isValidPassword(password))
+        {
+            _messageTextUI.text = "패스워드는 7~20자, 대/소문자 각 1개 이상, 숫자 1개 이상, 특수문자 1개 이상 입력해주세요.";
+            return;
+        }
 
         // 2차 비밀번호 입력을 확인한다.
-        string password2 = _passwordInputField.text;
+        string password2 = _passwordConfirmInputField.text;
         if (string.IsNullOrEmpty(password2) || password != password2)
         {
             _messageTextUI.text = "패스워드를 다시 확인해주세요.";
@@ -122,7 +147,9 @@ public class LoginScene : MonoBehaviour
             return;
         }
 
-        PlayerPrefs.SetString(id, password);
+        string encryptedPassword = AESCrypto.Encrypt(password);
+        PlayerPrefs.SetString(id, encryptedPassword);
+        PlayerPrefs.Save();
 
         GotoLogin();
     }
@@ -139,4 +166,16 @@ public class LoginScene : MonoBehaviour
         Refresh();
     }
 
+    private void LoadLastLoginID()
+    {
+        if (PlayerPrefs.HasKey("LastLoginID"))
+        {
+            _idInputField.text = PlayerPrefs.GetString("LastLoginID");
+            _passwordInputField.text = string.Empty;
+        }
+        else
+        {
+            _idInputField.text = string.Empty;
+        }
+    }
 }
