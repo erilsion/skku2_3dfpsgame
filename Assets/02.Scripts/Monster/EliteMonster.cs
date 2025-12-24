@@ -348,6 +348,7 @@ public class EliteMonster : PlayStateListener, IDamageable
         _agent.Warp(end);
 
         _agent.updatePosition = true;
+        _agent.updateRotation = true;
         _agent.isStopped = false;
         _jumpCoroutine = null;
 
