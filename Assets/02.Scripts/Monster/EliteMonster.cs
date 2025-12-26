@@ -186,6 +186,7 @@ public class EliteMonster : PlayStateListener, IDamageable
         float distance = Vector3.Distance(transform.position, _player.transform.position);
         if (distance > AttackDistance)
         {
+            AttackTimer = 0f;
             State = EEliteMonsterState.Trace;
             return;
         }
@@ -194,19 +195,7 @@ public class EliteMonster : PlayStateListener, IDamageable
         if (AttackTimer >= AttackSpeed)
         {
             _animator.SetTrigger("Attack");
-
-            if (_playerStats != null)
-            {
-                Damage damage = new Damage()
-                {
-                    Value = Damage,
-                    HitPoint = transform.position
-                };
-
-                _playerStats.TryTakeDamage(Damage);
-                Debug.Log("플레이어 공격!");
-            }
-
+            Debug.Log("플레이어 공격!");
             AttackTimer = 0f;
         }
     }
