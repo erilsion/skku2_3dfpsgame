@@ -134,7 +134,7 @@ MonoBehaviour:
     _value: 30
     _regenValue: 0
   _damage: 100
-  _explosionEffectPrefab: {fileID: 560014183069458990, guid: 621e45f610d611746802ad828f66b094, type: 3}
+  _explosionEffectPrefab: {fileID: 560014183069458990, guid: 405fd53a6bb22a1408a43c93f83f8462, type: 3}
   _explosionRadius: 10
   _damageLayerMask:
     serializedVersion: 2
